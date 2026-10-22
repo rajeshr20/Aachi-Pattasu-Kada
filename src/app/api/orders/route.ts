@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb, schema } from '../../../../db'
 import { z } from 'zod'
 
 const orderSchema = z.object({
@@ -42,12 +42,6 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
-async function generateOrderNumber(): Promise<string> {
-  const year = new Date().getFullYear()
-  const count = await prisma.order.count()
-  return `APK-${year}-${String(count + 1).padStart(4, '0')}`
-}
-
 export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for') || 'unknown'
   if (!checkRateLimit(ip)) {
@@ -71,58 +65,32 @@ export async function POST(req: Request) {
   }
 
   try {
-    // Upsert customer
-    const customer = await prisma.customer.upsert({
-      where: { phone: data.phone },
-      update: { name: data.name, email: data.email || undefined, address: data.address },
-      create: {
-        name: data.name,
-        phone: data.phone,
-        whatsapp: data.whatsapp || data.phone,
-        email: data.email || undefined,
-        address: data.address,
-        pincode: data.pincode,
-      },
-    })
+    const order = await getDb().transaction(async tx => {
+      const [customer] = await tx.insert(schema.customer).values({
+        name: data.name, phone: data.phone, whatsapp: data.whatsapp || data.phone,
+        email: data.email || null, address: data.address, pincode: data.pincode,
+      }).onConflictDoUpdate({
+        target: schema.customer.phone,
+        set: { name: data.name, email: data.email || undefined, address: data.address },
+      }).returning()
 
-    const orderNumber = await generateOrderNumber()
-
-    const order = await prisma.order.create({
-      data: {
-        orderNumber,
-        customerId: customer.id,
-        customerName: data.name,
-        customerPhone: data.phone,
-        customerEmail: data.email || undefined,
-        customerAddress: data.address,
-        customerPincode: data.pincode,
-        whatsappNumber: data.whatsapp || data.phone,
-        deliveryType: data.deliveryType,
-        notes: data.notes,
-        subtotal: data.subtotal,
-        total: data.total,
-        legalAccepted: data.legalAccepted,
-        status: 'RECEIVED',
-        paymentStatus: 'PENDING',
-        items: {
-          create: data.items.map(item => ({
-            productId: item.productId || null,
-            productName: item.productName,
-            productNameTa: item.productNameTa,
-            unit: item.unit,
-            mrp: item.mrp,
-            offerPrice: item.offerPrice,
-            quantity: item.quantity,
-            lineTotal: item.lineTotal,
-          })),
-        },
-        statusHistory: {
-          create: {
-            status: 'RECEIVED',
-            note: 'Order placed by customer',
-          },
-        },
-      },
+      // UUID suffixes avoid collisions between simultaneous serverless requests.
+      const orderNumber = `APK-${new Date().getFullYear()}-${crypto.randomUUID().toUpperCase()}`
+      const [created] = await tx.insert(schema.order).values({
+        orderNumber, customerId: customer.id,
+        customerName: data.name, customerPhone: data.phone,
+        customerEmail: data.email || null, customerAddress: data.address,
+        customerPincode: data.pincode, whatsappNumber: data.whatsapp || data.phone,
+        deliveryType: data.deliveryType, notes: data.notes,
+        subtotal: data.subtotal, total: data.total, legalAccepted: data.legalAccepted,
+      }).returning()
+      await tx.insert(schema.orderItem).values(data.items.map(item => ({
+        ...item, productId: item.productId || null, orderId: created.id,
+      })))
+      await tx.insert(schema.orderStatusHistory).values({
+        orderId: created.id, status: 'RECEIVED', note: 'Order placed by customer',
+      })
+      return created
     })
 
     return NextResponse.json({ orderNumber: order.orderNumber, orderId: order.id }, { status: 201 })

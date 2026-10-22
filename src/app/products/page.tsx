@@ -1,5 +1,5 @@
 import { connection } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb } from '../../../db'
 import { getSettings } from '@/lib/settings'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -23,14 +23,14 @@ export default async function ProductsPage({
   const params = await searchParams
   const [settings, categories, products] = await Promise.all([
     getSettings(),
-    prisma.category.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } }),
-    prisma.product.findMany({
+    getDb().query.category.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } }),
+    getDb().query.product.findMany({
       where: { isDeleted: false },
-      include: {
-        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
-        category: { select: { name: true, nameTa: true, slug: true } },
+      with: {
+        images: { orderBy: { sortOrder: 'asc' }, limit: 1 },
+        category: { columns: { name: true, nameTa: true, slug: true } },
       },
-      orderBy: [{ isFeatured: 'desc' }, { sortOrder: 'asc' }, { name: 'asc' }],
+      orderBy: { isFeatured: 'desc', sortOrder: 'asc', name: 'asc' },
     }),
   ])
 

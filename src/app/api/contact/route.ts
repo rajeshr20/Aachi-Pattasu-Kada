@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb, schema } from '../../../../db'
 import { z } from 'zod'
 
 const contactSchema = z.object({
@@ -20,14 +20,12 @@ export async function POST(req: Request) {
 
     const { name, phone, email, message } = result.data
 
-    const enquiry = await prisma.enquiry.create({
-      data: {
+    const [enquiry] = await getDb().insert(schema.enquiry).values({
         name,
         phone,
         email: email || null,
         message,
-      },
-    })
+    }).returning()
 
     return NextResponse.json({ success: true, id: enquiry.id })
   } catch (error) {

@@ -1,12 +1,12 @@
 import { connection } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb } from '../../../../db'
 import { MessageSquare, Phone, Mail, Clock, CheckCircle } from 'lucide-react'
 
 export default async function AdminEnquiriesPage() {
   // Query live data only when handling a request, never during prerendering.
   await connection()
 
-  const enquiries = await prisma.enquiry.findMany({
+  const enquiries = await getDb().query.enquiry.findMany({
     orderBy: { createdAt: 'desc' },
   })
 

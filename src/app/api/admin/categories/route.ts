@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb, schema } from '../../../../../db'
 import { auth } from '@/lib/auth'
 import { z } from 'zod'
 
@@ -12,15 +12,13 @@ const categorySchema = z.object({
 
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany({
+    const categories = await getDb().query.category.findMany({
       orderBy: { sortOrder: 'asc' },
-      include: {
-        _count: {
-          select: { products: true },
-        },
+      with: {
+        products: true,
       },
     })
-    return NextResponse.json({ categories })
+    return NextResponse.json({ categories: categories.map(({ products, ...category }) => ({ ...category, _count: { products: products.length } })) })
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
   }
@@ -40,13 +38,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: result.error.issues[0]?.message || 'Invalid input' }, { status: 400 })
     }
 
-    const category = await prisma.category.create({
-      data: result.data,
-    })
+    const [category] = await getDb().insert(schema.category).values(result.data).returning()
 
     return NextResponse.json({ success: true, category })
   } catch (error: any) {
-    if (error.code === 'P2002') {
+    if ((error.cause?.code || error.code) === '23505') {
       return NextResponse.json({ error: 'Category with this slug already exists' }, { status: 400 })
     }
     return NextResponse.json({ error: 'Failed to create category' }, { status: 500 })

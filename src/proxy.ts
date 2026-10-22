@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
+import NextAuth from 'next-auth'
+import { authConfig } from '@/lib/auth.config'
 
-export async function middleware(request: NextRequest) {
+// Proxy validates the signed JWT without importing credential lookup or Postgres.
+const { auth } = NextAuth(authConfig)
+
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Protect admin routes (except login)

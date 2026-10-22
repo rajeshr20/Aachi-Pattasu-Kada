@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb, schema } from '../../../../../db'
 import { auth } from '@/lib/auth'
 
 export async function POST(req: Request) {
@@ -12,11 +12,8 @@ export async function POST(req: Request) {
     const settings = await req.json()
 
     for (const [key, value] of Object.entries(settings)) {
-      await prisma.setting.upsert({
-        where: { key },
-        update: { value: String(value) },
-        create: { key, value: String(value) },
-      })
+      await getDb().insert(schema.setting).values({ key, value: String(value) })
+        .onConflictDoUpdate({ target: schema.setting.key, set: { value: String(value) } })
     }
 
     return NextResponse.json({ success: true })

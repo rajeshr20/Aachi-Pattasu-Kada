@@ -1,6 +1,6 @@
 import { connection } from 'next/server'
 import { getSettings } from '@/lib/settings'
-import { prisma } from '@/lib/prisma'
+import { getDb } from '../../db'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import HeroSection from '@/components/home/HeroSection'
@@ -18,19 +18,19 @@ export default async function HomePage() {
 
   const [settings, categories, featuredProducts, newArrivals] = await Promise.all([
     getSettings(),
-    prisma.category.findMany({
+    getDb().query.category.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: 'asc' },
     }),
-    prisma.product.findMany({
+    getDb().query.product.findMany({
       where: { isFeatured: true, isDeleted: false, inStock: true },
-      include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 }, category: true },
-      take: 8,
+      with: { images: { orderBy: { sortOrder: 'asc' }, limit: 1 }, category: true },
+      limit: 8,
     }),
-    prisma.product.findMany({
+    getDb().query.product.findMany({
       where: { isNewArrival: true, isDeleted: false, inStock: true },
-      include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 }, category: true },
-      take: 8,
+      with: { images: { orderBy: { sortOrder: 'asc' }, limit: 1 }, category: true },
+      limit: 8,
     }),
   ])
 

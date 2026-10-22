@@ -1,5 +1,6 @@
 import { connection } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb, schema } from '../../../db'
+import { eq, gte, inArray, ne, sql } from 'drizzle-orm'
 import { ShoppingBag, Users, Package, TrendingUp, Clock, CheckCircle, AlertTriangle, IndianRupee } from 'lucide-react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
@@ -21,22 +22,22 @@ export default async function AdminDashboard() {
     lowStockProducts,
     totalProducts,
   ] = await Promise.all([
-    prisma.order.count(),
-    prisma.order.count({ where: { createdAt: { gte: today } } }),
-    prisma.order.count({ where: { status: 'RECEIVED' } }),
-    prisma.order.count({ where: { status: { in: ['CONFIRMED', 'PACKED', 'DISPATCHED'] } } }),
-    prisma.order.aggregate({ _sum: { total: true }, where: { status: { not: 'CANCELLED' } } }),
-    prisma.order.findMany({
+    getDb().$count(schema.order),
+    getDb().$count(schema.order, gte(schema.order.createdAt, today)),
+    getDb().$count(schema.order, eq(schema.order.status, 'RECEIVED')),
+    getDb().$count(schema.order, inArray(schema.order.status, ['CONFIRMED', 'PACKED', 'DISPATCHED'])),
+    getDb().select({ total: sql<number>`coalesce(sum(${schema.order.total}), 0)`.mapWith(Number) }).from(schema.order).where(ne(schema.order.status, 'CANCELLED')),
+    getDb().query.order.findMany({
       orderBy: { createdAt: 'desc' },
-      take: 8,
-      include: { items: true },
+      limit: 8,
+      with: { items: true },
     }),
-    prisma.product.findMany({
+    getDb().query.product.findMany({
       where: { isDeleted: false, stock: { lte: 10 }, inStock: true },
       orderBy: { stock: 'asc' },
-      take: 5,
+      limit: 5,
     }),
-    prisma.product.count({ where: { isDeleted: false } }),
+    getDb().$count(schema.product, eq(schema.product.isDeleted, false)),
   ])
 
   const stats = [
@@ -44,7 +45,7 @@ export default async function AdminDashboard() {
     { label: "Today's Orders", value: todayOrders, icon: TrendingUp, color: 'text-[#2ECC71]', bg: 'bg-[#2ECC71]/10' },
     { label: 'Pending Confirmation', value: pendingOrders, icon: Clock, color: 'text-[#E67E22]', bg: 'bg-[#E67E22]/10' },
     { label: 'Active Orders', value: confirmedOrders, icon: CheckCircle, color: 'text-[#3498DB]', bg: 'bg-[#3498DB]/10' },
-    { label: 'Total Revenue', value: formatPrice(totalRevenue._sum.total || 0), icon: IndianRupee, color: 'text-[#F5A623]', bg: 'bg-[#F5A623]/10' },
+    { label: 'Total Revenue', value: formatPrice(totalRevenue[0]?.total || 0), icon: IndianRupee, color: 'text-[#F5A623]', bg: 'bg-[#F5A623]/10' },
     { label: 'Products', value: totalProducts, icon: Package, color: 'text-[#8E44AD]', bg: 'bg-[#8E44AD]/10' },
   ]
 

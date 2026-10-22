@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb } from '../../../../db'
 
 export async function GET(req: Request) {
   try {
@@ -11,14 +11,14 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Order Number and Phone Number are required' }, { status: 400 })
     }
 
-    const order = await prisma.order.findFirst({
+    const order = await getDb().query.order.findFirst({
       where: {
         orderNumber,
         customerPhone: {
-          endsWith: phone.slice(-10),
+          like: `%${phone.slice(-10).replace(/[%_\\]/g, "\\$&")}`,
         },
       },
-      include: {
+      with: {
         items: true,
       },
     })

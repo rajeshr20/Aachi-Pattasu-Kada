@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb, schema } from '../../../../../db'
+import { eq } from 'drizzle-orm'
 import { auth } from '@/lib/auth'
 import { z } from 'zod'
 
@@ -27,10 +28,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const products = await prisma.product.findMany({
+    const products = await getDb().query.product.findMany({
       where: { isDeleted: false },
-      include: { category: true },
-      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+      with: { category: true },
+      orderBy: { sortOrder: 'asc', createdAt: 'desc' },
     })
 
     return NextResponse.json({ products })
@@ -53,13 +54,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: result.error.issues[0]?.message || 'Invalid input' }, { status: 400 })
     }
 
-    const product = await prisma.product.create({
-      data: result.data,
-    })
+    const [product] = await getDb().insert(schema.product).values(result.data).returning()
 
     return NextResponse.json({ success: true, product })
   } catch (error: any) {
-    if (error.code === 'P2002') {
+    if ((error.cause?.code || error.code) === '23505') {
       return NextResponse.json({ error: 'A product with this slug already exists' }, { status: 400 })
     }
     return NextResponse.json({ error: 'Failed to create product' }, { status: 500 })
@@ -80,10 +79,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 })
     }
 
-    await prisma.product.update({
-      where: { id },
-      data: { isDeleted: true },
-    })
+    await getDb().update(schema.product).set({ isDeleted: true }).where(eq(schema.product.id, id))
 
     return NextResponse.json({ success: true })
   } catch (error) {

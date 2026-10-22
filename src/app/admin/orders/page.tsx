@@ -1,6 +1,7 @@
 import { connection } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb, schema } from '../../../../db'
 import Link from 'next/link'
+import { and, eq, ilike, or } from 'drizzle-orm'
 import { formatPrice } from '@/lib/utils'
 import { Plus, Search } from 'lucide-react'
 
@@ -26,25 +27,32 @@ export default async function AdminOrdersPage({
   const pageSize = 20
   const skip = (page - 1) * pageSize
 
-  const where: Record<string, unknown> = {}
+  const where: NonNullable<Parameters<ReturnType<typeof getDb>["query"]["order"]["findMany"]>[0]>["where"] = {}
   if (params.status) where.status = params.status
   if (params.q) {
     where.OR = [
-      { orderNumber: { contains: params.q } },
-      { customerName: { contains: params.q } },
-      { customerPhone: { contains: params.q } },
+      { orderNumber: { ilike: `%${params.q.replace(/[%_\\]/g, "\\$&")}%` } },
+      { customerName: { ilike: `%${params.q.replace(/[%_\\]/g, "\\$&")}%` } },
+      { customerPhone: { ilike: `%${params.q.replace(/[%_\\]/g, "\\$&")}%` } },
     ]
   }
 
   const [orders, total] = await Promise.all([
-    prisma.order.findMany({
+    getDb().query.order.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      skip,
-      take: pageSize,
-      include: { items: true },
+      offset: skip,
+      limit: pageSize,
+      with: { items: true },
     }),
-    prisma.order.count({ where }),
+    getDb().$count(schema.order, and(
+      params.status ? eq(schema.order.status, params.status) : undefined,
+      params.q ? or(
+        ilike(schema.order.orderNumber, `%${params.q.replace(/[%_\\]/g, "\\$&")}%`),
+        ilike(schema.order.customerName, `%${params.q.replace(/[%_\\]/g, "\\$&")}%`),
+        ilike(schema.order.customerPhone, `%${params.q.replace(/[%_\\]/g, "\\$&")}%`),
+      ) : undefined,
+    )),
   ])
 
   const totalPages = Math.ceil(total / pageSize)

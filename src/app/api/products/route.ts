@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb } from '../../../../db'
 
 export async function GET(req: Request) {
   try {
@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const featured = searchParams.get('featured')
     const search = searchParams.get('q')
 
-    const where: any = {
+    const where: NonNullable<Parameters<ReturnType<typeof getDb>["query"]["product"]["findMany"]>[0]>["where"] = {
       isDeleted: false,
     }
 
@@ -22,24 +22,21 @@ export async function GET(req: Request) {
 
     if (search) {
       where.OR = [
-        { name: { contains: search } },
-        { nameTa: { contains: search } },
+        { name: { ilike: `%${search.replace(/[%_\\]/g, "\\$&")}%` } },
+        { nameTa: { ilike: `%${search.replace(/[%_\\]/g, "\\$&")}%` } },
       ]
     }
 
-    const products = await prisma.product.findMany({
+    const products = await getDb().query.product.findMany({
       where,
-      include: {
+      with: {
         category: true,
         images: {
           orderBy: { sortOrder: 'asc' },
-          take: 1,
+          limit: 1,
         },
       },
-      orderBy: [
-        { sortOrder: 'asc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: { sortOrder: 'asc', createdAt: 'desc' },
     })
 
     return NextResponse.json({ products })

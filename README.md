@@ -34,3 +34,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Database on Netlify
+
+The deployed application uses Netlify Database (Postgres) through Drizzle. The schema is defined in `db/schema.ts`, and deployment migrations are generated with `npx drizzle-kit generate --name <descriptive_name>`. Netlify applies the migrations during deployment. Use `netlify dev --port 8889` for local development with platform configuration.
+
+The database starts empty. This change does not import a previous local SQLite database, catalog, or administrator accounts. The files under `prisma/` are legacy SQLite utilities and must not be used to initialize the deployed Postgres database. Existing data requires an explicit import into the new schema; administrator credentials should never be hard-coded in migrations.

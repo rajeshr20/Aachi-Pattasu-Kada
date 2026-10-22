@@ -1,5 +1,5 @@
 import { connection } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb } from '../../../../db'
 import Link from 'next/link'
 import { Plus, Search, Tag, Eye, Package, Trash2, Edit } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
@@ -8,10 +8,10 @@ export default async function AdminProductsPage() {
   // Query live data only when handling a request, never during prerendering.
   await connection()
 
-  const products = await prisma.product.findMany({
+  const products = await getDb().query.product.findMany({
     where: { isDeleted: false },
-    include: { category: true },
-    orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+    with: { category: true },
+    orderBy: { sortOrder: 'asc', createdAt: 'desc' },
   })
 
   return (

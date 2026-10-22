@@ -1,5 +1,5 @@
 import { connection } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getDb } from '../../../../../db'
 import { notFound } from 'next/navigation'
 import { formatPrice } from '@/lib/utils'
 import Link from 'next/link'
@@ -18,9 +18,9 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   await connection()
 
   const { id } = await params
-  const order = await prisma.order.findUnique({
+  const order = await getDb().query.order.findFirst({
     where: { id },
-    include: {
+    with: {
       items: true,
       statusHistory: { orderBy: { createdAt: 'asc' } },
       customer: true,
