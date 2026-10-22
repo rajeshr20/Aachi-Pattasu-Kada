@@ -1,0 +1,226 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("STAFF") // OWNER | STAFF
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  auditLogs AuditLog[]
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    // English name
+  nameTa    String    // Tamil name
+  slug      String    @unique
+  icon      String?   // emoji or icon name
+  image     String?   // image URL
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  products  Product[]
+
+  @@index([slug])
+  @@index([sortOrder])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String   // English name
+  nameTa      String   // Tamil name
+  slug        String   @unique
+  description String?
+  descTa      String?
+
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  mrp         Float    // Maximum Retail Price
+  offerPrice  Float    // Our price
+  unit        String   @default("1 box") // e.g. "1 box", "5 pcs"
+
+  stock       Int      @default(0)
+  inStock     Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  isNewArrival Boolean @default(false)
+  isBestSeller Boolean @default(false)
+
+  videoUrl    String?
+  sortOrder   Int      @default(0)
+
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  images      ProductImage[]
+  orderItems  OrderItem[]
+
+  @@index([categoryId])
+  @@index([slug])
+  @@index([isDeleted])
+  @@index([isFeatured])
+  @@index([createdAt])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+
+  @@index([productId])
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @unique
+  whatsapp  String?
+  email     String?
+  address   String?
+  pincode   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique // e.g. APK-2026-0001
+  customerId     String
+  customer       Customer    @relation(fields: [customerId], references: [id])
+
+  // Snapshot of customer info at order time
+  customerName   String
+  customerPhone  String
+  customerEmail  String?
+  customerAddress String
+  customerPincode String?
+  whatsappNumber String?
+
+  deliveryType   String   @default("PICKUP") // PICKUP | PARCEL
+  notes          String?
+
+  subtotal       Float
+  total          Float
+
+  status         String   @default("RECEIVED") // RECEIVED|CONFIRMED|PACKED|DISPATCHED|DELIVERED|CANCELLED
+  paymentStatus  String   @default("PENDING") // PENDING|PARTIAL|PAID
+  paymentMethod  String?     // cash, upi, bank
+  paymentNote    String?
+
+  paymentEnabled Boolean     @default(false) // admin can enable pay page
+
+  legalAccepted  Boolean     @default(false)
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  items          OrderItem[]
+  statusHistory  OrderStatusHistory[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([customerId])
+  @@index([orderNumber])
+}
+
+// Enums represented as strings for cross-DB compatibility
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id])
+
+  // Snapshot at order time
+  productName String
+  productNameTa String
+  unit        String
+  mrp         Float
+  offerPrice  Float
+  quantity    Int
+  lineTotal   Float
+
+  @@index([orderId])
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    String
+  note      String?
+  changedBy String?     // admin name
+  createdAt DateTime    @default(now())
+
+  @@index([orderId])
+}
+
+model Banner {
+  id          String    @id @default(cuid())
+  title       String
+  titleTa     String?
+  subtitle    String?
+  imageUrl    String
+  linkUrl     String?
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Enquiry {
+  id        String        @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  message   String
+  isRead    Boolean       @default(false)
+  createdAt DateTime      @default(now())
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([entity])
+  @@index([createdAt])
+}
