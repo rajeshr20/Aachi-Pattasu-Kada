@@ -1,83 +1,69 @@
 'use client'
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react'
+import { MessageSquare, PhoneCall } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
-export default function PromotionalBanner() {
+interface BulkEventsCTAProps {
+  settings?: Record<string, string>
+}
+
+export default function PromotionalBanner({ settings = {} }: BulkEventsCTAProps) {
+  const { locale } = useLanguage()
+
+  const phone1 = settings.phone1 || '9500565391'
+  const whatsapp = settings.whatsapp || '919500565391'
+
   return (
-    <section className="w-full py-20 sm:py-28 bg-[#10172A] relative overflow-hidden border-y border-white/10">
-      {/* Background radial ambient glow */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[450px] bg-[#D6B36A]/10 rounded-full blur-[140px] pointer-events-none" />
+    <section className="w-full py-16 sm:py-20 bg-gradient-to-r from-[#06222f] via-[#093246] to-[#0b3a52] text-white">
+      <div className="site-container">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 sm:gap-10">
+          
+          {/* Left Text */}
+          <div className="max-w-2xl">
+            <span className="text-[#FFB300] text-xs font-black uppercase tracking-widest block mb-2">
+              {locale === 'ta' ? 'திருமணம், திருவிழா & பெரு நிறுவனங்கள்' : 'FOR WEDDINGS, EVENTS & CORPORATES'}
+            </span>
 
-      <div className="site-container relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Left Text Content */}
-          <div className="lg:col-span-7 text-left space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D6B36A]/10 border border-[#D6B36A]/30 text-[#D6B36A] text-xs font-black uppercase tracking-widest">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Diwali 2026 Special Collection</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15]">
-              Curated Diwali <span className="text-gold-gradient">Gift Hampers</span>
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-4">
+              {locale === 'ta' ? 'மொத்தமாக வாங்க திட்டமிடுகிறீர்களா?' : 'Planning something big?'}
             </h2>
 
-            <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl">
-              Celebrate the festival of lights with our handpicked family assortments. Packed with deluxe ground chakkars, sparkling flower pots, whistling rockets, and repeating aerial shots with up to 80% direct factory savings.
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
+              {locale === 'ta'
+                ? 'திருமண வரவேற்பு, கோவில் திருவிழாக்கள் அல்லது நிறுவன விழாக்களுக்கு தனிப்பயன் பேக்குகள் மற்றும் பிரத்யேக மொத்த விலை வழங்குகிறோம்.'
+                : 'Wedding sangeet, temple festival, corporate gifting or a community celebration — our bulk team will design a custom pack and price for you.'}
             </p>
 
-            <div className="flex flex-wrap items-center gap-6 pt-2 text-xs text-gray-300 font-medium">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#D6B36A]" />
-                <span>Moisture-Proof Double Packing</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[#D6B36A]">⚡</span>
-                <span>Genuine Sivakasi Assortment</span>
-              </div>
-            </div>
-
-            <div className="pt-4">
-              <Link
-                href="/products?category=gift-boxes"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-[#B91C35] hover:bg-[#9E152B] text-white font-extrabold text-sm sm:text-base shadow-xl shadow-red-950/40 hover:-translate-y-0.5 transition-all"
-              >
-                <span>Explore Gift Hampers</span>
-                <ArrowRight className="w-5 h-5 text-white" />
-              </Link>
-            </div>
+            <p className="text-xs text-amber-300/80 font-semibold tracking-wide">
+              {locale === 'ta'
+                ? 'நேரடி மொத்த விலை · ஜிஎஸ்டி பில் · பாதுகாப்பான பார்சல் டெலிவரி'
+                : 'Wholesale rates auto-applied · GST B2B invoices · Doorstep delivery'}
+            </p>
           </div>
 
-          {/* Right Image Showcase */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative aspect-[4/3] sm:aspect-square w-full rounded-2xl overflow-hidden border border-white/15 shadow-2xl shadow-black/40">
-              <Image
-                src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80"
-                alt="Diwali Fireworks Gift Hampers"
-                fill
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#10172A] via-transparent to-transparent opacity-60" />
+          {/* Right Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 shrink-0">
+            <a
+              href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(
+                'Hi Aachi Pattasu Kadai, I would like to get a quote for a bulk/wedding cracker order.'
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-amber text-sm sm:text-base justify-center shadow-lg"
+            >
+              <MessageSquare className="w-4 h-4 text-slate-900" />
+              <span>{locale === 'ta' ? 'வாட்ஸ்அப் மூலம் பேச' : 'WhatsApp us'}</span>
+            </a>
 
-              <div className="absolute bottom-5 left-5 right-5 p-4 rounded-xl bg-[#10172A]/85 backdrop-blur-md border border-white/15 text-left">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-[11px] font-bold text-[#D6B36A] uppercase tracking-wider block">
-                      Wholesale Family Hamper
-                    </span>
-                    <span className="text-white font-bold text-sm block">
-                      VIP Royal Assortment Box
-                    </span>
-                  </div>
-                  <span className="text-white font-mono font-black text-lg text-[#27AE60]">
-                    From ₹1,250
-                  </span>
-                </div>
-              </div>
-            </div>
+            <a
+              href={`tel:+91${phone1}`}
+              className="btn-outline-white text-sm sm:text-base justify-center"
+            >
+              <PhoneCall className="w-4 h-4 text-[#FFB300]" />
+              <span>{locale === 'ta' ? `அழைக்க (${phone1})` : `Call our team (${phone1})`}</span>
+            </a>
           </div>
+
         </div>
       </div>
     </section>

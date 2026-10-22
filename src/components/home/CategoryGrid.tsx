@@ -1,100 +1,167 @@
 'use client'
 
+import { useRef } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { ChevronRight, Sparkles } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  Zap,
+  Flame,
+  Rocket,
+  Gift,
+  Disc,
+  Flower2,
+  Boxes,
+  Waves,
+  Star,
+  PartyPopper,
+  ShieldAlert,
+} from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
 interface Category {
   id: string
   name: string
+  nameTa?: string
   slug: string
   icon?: string | null
-  image?: string | null
 }
 
 interface CategoryGridProps {
   categories: Category[]
 }
 
+const getCategoryVectorIcon = (slug: string) => {
+  if (slug.includes('sound') || slug.includes('chorsa') || slug.includes('garland')) {
+    return <Flame className="w-7 h-7 text-[#FFB300]" />
+  }
+  if (slug.includes('bijili')) {
+    return <Zap className="w-7 h-7 text-[#FACC15]" />
+  }
+  if (slug.includes('chakkar') || slug.includes('wheel')) {
+    return <Disc className="w-7 h-7 text-[#38BDF8]" />
+  }
+  if (slug.includes('pot') || slug.includes('fountain')) {
+    return <Flower2 className="w-7 h-7 text-[#FB7185]" />
+  }
+  if (slug.includes('sparkler')) {
+    return <Sparkles className="w-7 h-7 text-[#FDE047]" />
+  }
+  if (slug.includes('rocket')) {
+    return <Rocket className="w-7 h-7 text-[#F97316]" />
+  }
+  if (slug.includes('aerial') || slug.includes('shot')) {
+    return <PartyPopper className="w-7 h-7 text-[#C084FC]" />
+  }
+  if (slug.includes('gift')) {
+    return <Gift className="w-7 h-7 text-[#34D399]" />
+  }
+  if (slug.includes('fancy') || slug.includes('kid')) {
+    return <Star className="w-7 h-7 text-[#FBBF24]" />
+  }
+  return <Sparkles className="w-7 h-7 text-[#FFB300]" />
+}
+
 export default function CategoryGrid({ categories }: CategoryGridProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { locale, t } = useLanguage()
+
   if (!categories || categories.length === 0) return null
 
+  const scroll = (direction: 'left' | 'right') => {
+    if (containerRef.current) {
+      const offset = direction === 'left' ? -320 : 320
+      containerRef.current.scrollBy({ left: offset, behavior: 'smooth' })
+    }
+  }
+
   return (
-    <section id="categories" className="w-full py-24 sm:py-32 bg-[#FAF7F2] border-t border-[#EADBCA]">
-      <div className="site-container flex flex-col items-center">
-        {/* Section Header with generous margin */}
-        <div className="text-center max-w-2xl mx-auto mb-14 sm:mb-18">
-          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-[#B91C35] font-black bg-[#B91C35]/10 px-4 py-1.5 rounded-full border border-[#B91C35]/20 mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Curated Sivakasi Collections</span>
+    <section id="categories" className="w-full py-16 sm:py-20 bg-[#FAF8F4] border-b border-[#EAE5DC]">
+      <div className="site-container">
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
+          <div>
+            <span className="section-eyebrow">
+              {locale === 'ta' ? 'பட்டாசு வகைகள்' : 'BROWSE THE LINEUP'}
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-black text-[#0F172A] tracking-tight">
+              {locale === 'ta' ? 'வகைகள் வாரியாக வாங்க' : 'Shop by category'}
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-sm mt-1 max-w-xl">
+              {locale === 'ta'
+                ? 'பூந்தொட்டி முதல் வான்வெடி வரை உங்கள் குடும்பத்திற்கு ஏற்ற அனைத்து ரகங்களும்.'
+                : 'Explore our diverse selections, from sparkling flower pots to ground spinners.'}
+            </p>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-black text-[#10172A] tracking-tight leading-tight mb-4">
-            Shop By <span className="text-[#B91C35]">Cracker Category</span>
-          </h2>
-          <p className="text-[#647084] text-sm sm:text-base max-w-lg mx-auto leading-relaxed font-normal">
-            Handcrafted traditional and modern fireworks organized for effortless family selection.
-          </p>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center gap-3">
+            <Link
+              href="/catalogue"
+              className="text-xs sm:text-sm font-bold text-[#0B6E99] hover:underline"
+            >
+              {locale === 'ta' ? 'அனைத்து வகைகள் →' : 'View full catalogue →'}
+            </Link>
+
+            <div className="hidden sm:flex items-center gap-1.5 ml-2">
+              <button
+                onClick={() => scroll('left')}
+                className="w-9 h-9 rounded-full bg-white border border-[#EAE5DC] hover:border-[#FFB300] flex items-center justify-center text-[#0F172A] shadow-xs cursor-pointer transition-colors"
+                aria-label="Previous categories"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => scroll('right')}
+                className="w-9 h-9 rounded-full bg-white border border-[#EAE5DC] hover:border-[#FFB300] flex items-center justify-center text-[#0F172A] shadow-xs cursor-pointer transition-colors"
+                aria-label="Next categories"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Category Card Grid - 4 cols desktop, 2 mobile with comfortable gaps */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8 w-full">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/products?category=${cat.slug}`}
-              className="group relative overflow-hidden rounded-3xl border border-[#EADBCA] bg-white hover:border-[#D6B36A] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 flex flex-col"
-            >
-              {/* Category Image with 4:3 Aspect Ratio */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#1E293B]">
-                {cat.image ? (
-                  <Image
-                    src={cat.image}
-                    alt={cat.name}
-                    fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover group-hover:scale-108 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl bg-gradient-to-br from-[#1E293B] to-[#10172A] text-white">
-                    {cat.icon || '🎆'}
-                  </div>
-                )}
-                {/* Subtle dark gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        {/* Fiery Radiant Rounded Cards Carousel / Grid */}
+        <div
+          ref={containerRef}
+          className="flex gap-4 sm:gap-6 overflow-x-auto pb-6 pt-2 no-scrollbar scroll-smooth"
+          style={{ scrollSnapType: 'x mandatory' }}
+        >
+          {categories.map((cat) => {
+            const displayName = locale === 'ta' && cat.nameTa ? cat.nameTa : cat.name
 
-                {/* Emoji badge */}
-                <div className="absolute top-3.5 left-3.5 w-9 h-9 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-base shadow-sm">
-                  {cat.icon || '💥'}
+            return (
+              <Link
+                key={cat.id}
+                href={`/catalogue?category=${cat.slug}`}
+                className="group shrink-0 w-48 sm:w-56 h-48 sm:h-56 rounded-3xl p-5 sm:p-6 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-1.5 shadow-md shadow-orange-950/10 hover:shadow-xl hover:shadow-orange-600/25 relative overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #FF6F00 0%, #F55100 50%, #D83A00 100%)',
+                  scrollSnapAlign: 'start',
+                }}
+              >
+                {/* Subtle festive background pattern / radial glow */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.25),transparent_70%)] pointer-events-none" />
+
+                {/* Central illuminated glyph box */}
+                <div className="relative mt-1 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-black/30 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-inner group-hover:scale-110 group-hover:bg-black/40 transition-all duration-300">
+                  {getCategoryVectorIcon(cat.slug)}
                 </div>
-              </div>
 
-              {/* Clean Card Footer */}
-              <div className="p-4 sm:p-5 flex items-center justify-between flex-1 bg-white">
-                <div className="min-w-0 pr-2">
-                  <h3 className="font-extrabold text-[#10172A] text-sm sm:text-base group-hover:text-[#B91C35] transition-colors leading-snug truncate">
-                    {cat.name}
+                {/* Category Title in Bold ALL-CAPS */}
+                <div className="relative z-10 w-full mb-1">
+                  <h3 className="text-white font-black text-xs sm:text-sm tracking-wider uppercase leading-tight line-clamp-2 drop-shadow-xs">
+                    {displayName}
                   </h3>
-                  <span className="text-[11px] sm:text-xs text-[#D6B36A] font-bold mt-0.5 block truncate">
-                    Explore Collection →
+                  <span className="text-amber-200 text-[10px] sm:text-[11px] font-semibold mt-1 opacity-90 group-hover:opacity-100 block">
+                    {locale === 'ta' ? 'காண்க →' : 'Explore →'}
                   </span>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-[#FAF7F2] border border-[#EADBCA] flex items-center justify-center text-stone-600 group-hover:bg-[#B91C35] group-hover:text-white group-hover:border-[#B91C35] transition-all shrink-0">
-                  <ChevronRight className="w-4 h-4" />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* View All Button */}
-        <div className="text-center mt-14 sm:mt-18">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-[#10172A] hover:bg-[#1E293B] text-white font-extrabold text-sm sm:text-base shadow-xl shadow-slate-950/20 hover:-translate-y-0.5 transition-all"
-          >
-            <span>Browse Full Products Catalogue</span>
-            <ChevronRight className="w-5 h-5 text-[#D6B36A]" />
-          </Link>
+              </Link>
+            )
+          })}
         </div>
       </div>
     </section>

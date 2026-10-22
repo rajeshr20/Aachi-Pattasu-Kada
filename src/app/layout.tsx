@@ -29,13 +29,15 @@ export const viewport: Viewport = {
   themeColor: '#0B0D1A',
 }
 
+import { LanguageProvider } from '@/context/LanguageContext'
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ta" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -46,9 +48,9 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'LocalBusiness',
-              name: 'Aachi Crackers',
-              alternateName: 'Aachi Pattasu Kadai',
-              description: 'Best firecrackers at factory prices in Perumanallur',
+              name: 'Aachi Pattasu Kadai',
+              alternateName: 'ஆச்சி பட்டாசு கடை',
+              description: 'Authentic Sivakasi firecrackers at factory wholesale rates in Perumanallur',
               telephone: '+919500565391',
               address: {
                 '@type': 'PostalAddress',
@@ -59,8 +61,8 @@ export default function RootLayout({
               },
               geo: {
                 '@type': 'GeoCoordinates',
-                latitude: '10.9526',
-                longitude: '77.3411',
+                latitude: '11.1925',
+                longitude: '77.3750',
               },
               openingHours: 'Mo-Su 09:00-21:00',
               priceRange: '₹₹',
@@ -68,8 +70,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
-        {children}
+      <body className="antialiased bg-[#FAF8F4] text-[#0F172A]">
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   )

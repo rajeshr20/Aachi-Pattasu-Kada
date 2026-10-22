@@ -1,104 +1,98 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { Phone, ChevronRight, Sparkles, ShieldCheck, ArrowRight, FileText, CheckCircle2, Factory, Flame, Award } from 'lucide-react'
-
-const FireworkCanvas = dynamic(() => import('../FireworkCanvas'), { ssr: false })
+import { Sparkles, ArrowRight, MessageSquare } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
 interface HeroProps {
   settings: Record<string, string>
 }
 
-export default function HeroSection({ settings }: HeroProps) {
-  const phone1 = settings.phone1 || '9500565391'
-  const address = settings.address || 'Opposite Aachi Mess, Perumanallur, Tirupur'
+// Gentle twinkling coordinates (respects prefers-reduced-motion in CSS)
+const TWINKLE_STARS = Array.from({ length: 36 }, (_, i) => ({
+  id: i,
+  left: `${((i * 37 + 13) % 94) + 3}%`,
+  top: `${((i * 29 + 17) % 85) + 5}%`,
+  delay: `${(((i * 17) % 30) / 10).toFixed(1)}s`,
+  duration: `${(2.2 + ((i * 11) % 20) / 10).toFixed(1)}s`,
+}))
 
-  const highlights = [
-    {
-      icon: ShieldCheck,
-      title: '100% Certified',
-      subtitle: 'CSIR-NEERI Green Crackers',
-    },
-    {
-      icon: Factory,
-      title: 'Factory Direct',
-      subtitle: 'Direct from Sivakasi',
-    },
-    {
-      icon: Flame,
-      title: '50+ Varieties',
-      subtitle: 'Sparklers to Mega Aerials',
-    },
-    {
-      icon: Award,
-      title: 'Zero Brokerage',
-      subtitle: 'Direct Wholesale Pricing',
-    },
-  ]
+export default function HeroSection({ settings }: HeroProps) {
+  const { locale, t } = useLanguage()
+
+  const shopName =
+    locale === 'ta'
+      ? settings.shop_name_ta || 'ஆச்சி பட்டாசு கடை'
+      : settings.shop_name || 'Aachi Pattasu Kadai'
+
+  const subtitle =
+    locale === 'ta'
+      ? settings.hero_subtitle_ta || 'சிவகாசியிலிருந்து நேரடியாக தொழிற்சாலை மொத்த விலையில் பாதுகாப்பான, தரமான பசுமைப் பட்டாசுகள்.'
+      : settings.hero_subtitle || 'Direct-from-factory Sivakasi green crackers at transparent wholesale prices. Safe, certified, and delivered to your doorstep.'
+
+  const whatsapp = settings.whatsapp || '919500565391'
 
   return (
-    <section className="relative overflow-hidden pt-40 pb-20 sm:pt-48 sm:pb-28 bg-[#10172A] border-b border-white/5">
-      {/* Cinematic Ambient Canvas */}
-      <FireworkCanvas />
-
-      {/* Elegant Radial Glow & Vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(214,179,106,0.15)_0%,rgba(16,23,42,0.85)_55%,#10172A_100%)] pointer-events-none" />
+    <section className="relative overflow-hidden py-20 sm:py-28 bg-navy-teal text-white border-b border-[#0b3a52]/50">
+      {/* CSS Twinkling Stars */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {TWINKLE_STARS.map((star) => (
+          <div
+            key={star.id}
+            className="star-dot"
+            style={{
+              left: star.left,
+              top: star.top,
+              animationDelay: star.delay,
+              animationDuration: star.duration,
+            }}
+          />
+        ))}
+      </div>
 
       <div className="relative z-10 site-container text-center flex flex-col items-center">
-        
-        {/* Subtle Gold Pill Badge */}
-        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#D6B36A]/10 border border-[#D6B36A]/30 text-[#D6B36A] text-xs font-bold uppercase tracking-widest mb-8 shadow-sm">
-          <Sparkles className="w-4 h-4 text-[#D6B36A]" />
-          <span>SIVAKASI DIRECT WHOLESALE CRACKERS</span>
+        {/* Pill Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#FFB300] text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>{t('hero.badge', '★ SIVAKASI DIRECT WHOLESALE CRACKERS ★')}</span>
         </div>
 
-        {/* Grand Headline */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.12] mb-6 max-w-4xl">
-          Light Up Every <span className="text-gold-gradient">Celebration</span>
+        {/* Big Bold Hero Headline */}
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.15] mb-6 max-w-4xl">
+          {locale === 'ta' ? (
+            <>
+              <span className="text-[#FFB300]">{shopName}</span>{' '}
+              <span>உடன் கொண்டாடுங்கள்</span>
+            </>
+          ) : (
+            <>
+              <span>Celebrate with</span>{' '}
+              <span className="text-[#FFB300]">{shopName}</span>
+            </>
+          )}
         </h1>
 
-        {/* Clean, Spacious Subtitle */}
-        <p className="text-base sm:text-lg lg:text-xl text-slate-300 font-normal max-w-2xl mx-auto mb-10 leading-relaxed">
-          Direct-from-factory Sivakasi green crackers at transparent wholesale prices. Safe, certified, and delivered to your doorstep with guaranteed family joy.
+        {/* Short Subtitle */}
+        <p className="text-base sm:text-xl text-slate-200 font-normal max-w-2xl mx-auto mb-10 leading-relaxed">
+          {subtitle}
         </p>
 
-        {/* Action Buttons: Spacious Crimson Primary + Clean Gold Outline */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 w-full max-w-md mx-auto sm:max-w-none">
-          <Link
-            href="/products"
-            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#B91C35] hover:bg-[#9E152B] text-white font-bold text-sm sm:text-base shadow-xl shadow-red-950/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
-          >
-            <span>Browse Crackers Catalogue</span>
-            <ChevronRight className="w-5 h-5" />
+        {/* Action Buttons: Amber Primary + Outlined WhatsApp */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto sm:max-w-none">
+          <Link href="/catalogue" className="btn-amber w-full sm:w-auto text-base">
+            <span>{t('hero.shop_now', 'Shop the collection →')}</span>
           </Link>
-          <Link
-            href="/price-list"
-            className="w-full sm:w-auto px-7 py-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-sm sm:text-base border border-white/20 hover:border-[#D6B36A] backdrop-blur-md transition-all flex items-center justify-center gap-2"
+
+          <a
+            href={`https://wa.me/${whatsapp}?text=${encodeURIComponent('Hi Aachi Pattasu Kadai, I would like to inquire about Bulk & Wedding cracker orders.')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline-white w-full sm:w-auto text-base"
           >
-            <FileText className="w-4 h-4 text-[#D6B36A]" />
-            <span>Download 2026 Price List</span>
-          </Link>
+            <MessageSquare className="w-4 h-4 text-[#16A34A]" />
+            <span>{t('hero.bulk_weddings', 'Bulk & Weddings')}</span>
+          </a>
         </div>
-
-        {/* 4-Column Highlights Bar (Rathinam Crackers Pattern) */}
-        <div className="w-full max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-8 border-t border-white/10">
-          {highlights.map((item, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5 p-4 rounded-2xl bg-white/[0.03] border border-white/5"
-            >
-              <div className="w-10 h-10 rounded-xl bg-[#D6B36A]/15 text-[#D6B36A] flex items-center justify-center shrink-0">
-                <item.icon className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-white font-extrabold text-sm sm:text-base">{item.title}</h3>
-                <p className="text-slate-400 text-xs mt-0.5">{item.subtitle}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
       </div>
     </section>
   )
