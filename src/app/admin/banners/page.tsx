@@ -1,7 +1,11 @@
+import { connection } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Image as ImageIcon, Plus } from 'lucide-react'
 
 export default async function AdminBannersPage() {
+  // Query live data only when handling a request, never during prerendering.
+  await connection()
+
   const banners = await prisma.banner.findMany({
     orderBy: { sortOrder: 'asc' },
   })

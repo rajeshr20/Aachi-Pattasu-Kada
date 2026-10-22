@@ -1,3 +1,4 @@
+import { connection } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import { formatPrice } from '@/lib/utils'
@@ -13,6 +14,9 @@ const statusColors: Record<string, string> = {
 const statusSteps = ['RECEIVED', 'CONFIRMED', 'PACKED', 'DISPATCHED', 'DELIVERED']
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  // Query live data only when handling a request, never during prerendering.
+  await connection()
+
   const { id } = await params
   const order = await prisma.order.findUnique({
     where: { id },

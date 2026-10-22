@@ -1,9 +1,13 @@
+import { connection } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { ShoppingBag, Users, Package, TrendingUp, Clock, CheckCircle, AlertTriangle, IndianRupee } from 'lucide-react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
 
 export default async function AdminDashboard() {
+  // Query live data only when handling a request, never during prerendering.
+  await connection()
+
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
