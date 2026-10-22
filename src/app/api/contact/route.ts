@@ -9,6 +9,8 @@ const contactSchema = z.object({
   message: z.string().min(5, 'Message must be at least 5 characters'),
 })
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: Request) {
   try {
     const body = await req.json()

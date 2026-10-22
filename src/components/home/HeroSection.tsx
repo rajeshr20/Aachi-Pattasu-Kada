@@ -26,7 +26,7 @@ export default function HeroSection({ settings }: HeroProps) {
   const address = settings.address || 'Opposite Aachi Mess, Perumanallur, Tirupur'
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
       {/* Animated Fireworks Canvas */}
       <FireworkCanvas />
 

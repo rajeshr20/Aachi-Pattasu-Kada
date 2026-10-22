@@ -29,21 +29,21 @@ export default function FAQSection() {
   ]
 
   return (
-    <section className="w-full py-16 sm:py-20">
+    <section className="w-full py-20 sm:py-28 bg-[#0B0D1A]">
       <div className="site-container-narrow">
-      <div className="text-center mb-12">
-        <span className="text-xs uppercase tracking-widest text-[#F5A623] font-extrabold bg-[#F5A623]/10 px-3.5 py-1.5 rounded-full border border-[#F5A623]/25">
+      <div className="text-center mb-14 sm:mb-18">
+        <span className="text-xs uppercase tracking-widest text-[#F5A623] font-black bg-[#F5A623]/10 px-4 py-1.5 rounded-full border border-[#F5A623]/30">
           Got Questions?
         </span>
-        <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-3 mb-3">
+        <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-4 mb-4">
           Frequently Asked Questions
         </h2>
-        <p className="text-gray-400 text-sm sm:text-base max-w-lg mx-auto">
+        <p className="text-gray-300 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
           Everything you need to know about our wholesale fireworks, ordering, safety, and delivery.
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 sm:space-y-5">
         {faqs.map((faq, i) => (
           <details
             key={i}

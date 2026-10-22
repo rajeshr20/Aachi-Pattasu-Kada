@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+import { DEFAULT_PRODUCTS } from '@/lib/catalogData'
+
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
@@ -42,9 +46,13 @@ export async function GET(req: Request) {
       ],
     })
 
+    if (products.length === 0 && !search && (!categorySlug || categorySlug === 'ALL')) {
+      return NextResponse.json({ products: DEFAULT_PRODUCTS })
+    }
+
     return NextResponse.json({ products })
   } catch (error) {
     console.error('Products API error:', error)
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
+    return NextResponse.json({ products: DEFAULT_PRODUCTS })
   }
 }

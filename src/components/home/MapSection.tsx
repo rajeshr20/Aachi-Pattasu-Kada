@@ -12,21 +12,21 @@ export default function MapSection({ settings }: MapSectionProps) {
   const hours = settings.opening_hours || '9:00 AM - 9:00 PM (All 7 Days)'
 
   return (
-    <section className="w-full py-16 sm:py-20" id="contact">
+    <section className="w-full py-20 sm:py-28 bg-[#0D1020] border-t border-white/5 relative" id="contact">
       <div className="site-container">
-      <div className="text-center mb-12">
-        <span className="text-xs uppercase tracking-widest text-[#F5A623] font-extrabold bg-[#F5A623]/10 px-3.5 py-1.5 rounded-full border border-[#F5A623]/25">
+      <div className="text-center mb-14 sm:mb-18">
+        <span className="text-xs uppercase tracking-widest text-[#F5A623] font-black bg-[#F5A623]/10 px-4 py-1.5 rounded-full border border-[#F5A623]/30">
           Store Visit & Pickup
         </span>
-        <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-3 mb-3">
+        <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-4 mb-4">
           Visit Our Landmark Store in Perumanallur
         </h2>
-        <p className="text-gray-400 text-sm sm:text-base max-w-lg mx-auto">
+        <p className="text-gray-300 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
           Located right opposite Aachi Mess on the main Perumanallur road with ample vehicle parking.
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
         {/* Google Map Iframe */}
         <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl h-80 sm:h-96 w-full relative">
           <iframe

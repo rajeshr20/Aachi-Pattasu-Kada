@@ -35,21 +35,21 @@ export default function WhyChooseUs() {
   ]
 
   return (
-    <section className="w-full py-16 sm:py-20 bg-[#0E1222] border-y border-white/5">
-      <div className="site-container">
-        <div className="text-center mb-14">
-          <span className="text-xs uppercase tracking-widest text-[#F5A623] font-extrabold bg-[#F5A623]/10 px-3.5 py-1.5 rounded-full border border-[#F5A623]/25">
+    <section className="w-full py-20 sm:py-28 bg-[#0D1020] border-y border-white/5 relative overflow-hidden">
+      <div className="site-container relative z-10">
+        <div className="text-center mb-16 sm:mb-20">
+          <span className="text-xs uppercase tracking-widest text-[#F5A623] font-black bg-[#F5A623]/10 px-4 py-1.5 rounded-full border border-[#F5A623]/30">
             The Aachi Crackers Advantage
           </span>
-          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-3 mb-3">
+          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-4 mb-4">
             Why Thousands Choose Us Every Diwali
           </h2>
-          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+          <p className="text-gray-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
             Experience reliable service, certified safety, and unmatched wholesale fireworks prices right here in Perumanallur.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {reasons.map((r, i) => (
             <div
               key={i}

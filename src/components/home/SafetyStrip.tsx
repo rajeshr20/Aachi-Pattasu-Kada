@@ -12,9 +12,9 @@ export default function SafetyStrip() {
   ]
 
   return (
-    <section className="w-full py-10 sm:py-12 bg-gradient-to-r from-[#181D33] via-[#121626] to-[#181D33] border-y border-white/10">
+    <section className="w-full py-16 sm:py-20 bg-gradient-to-r from-[#181D33] via-[#121626] to-[#181D33] border-y border-white/10">
       <div className="site-container">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10 sm:mb-12">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center border border-red-500/20">
               <ShieldAlert className="w-5 h-5" />

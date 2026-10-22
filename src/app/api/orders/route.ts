@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
+export const dynamic = 'force-dynamic'
+
 const orderSchema = z.object({
   name: z.string().min(1).max(100),
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Invalid Indian phone number'),
