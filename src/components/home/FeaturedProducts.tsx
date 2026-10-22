@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { formatPrice, calcDiscount } from '@/lib/utils'
@@ -16,7 +16,7 @@ interface Product {
   unit: string
   inStock: boolean
   images: { url: string }[]
-  category: { name: string }
+  category: { id?: string; name: string; slug?: string }
 }
 
 interface FeaturedProductsProps {
@@ -36,6 +36,21 @@ export default function FeaturedProducts({
 }: FeaturedProductsProps) {
   const { addItem, openCart } = useCartStore()
   const [addedId, setAddedId] = useState<string | null>(null)
+  const [selectedFilter, setSelectedFilter] = useState<string>('all')
+
+  // Extract unique categories for quick filter pills
+  const filterCategories = useMemo(() => {
+    const cats = new Set<string>()
+    products.forEach((p) => {
+      if (p.category?.name) cats.add(p.category.name)
+    })
+    return ['all', ...Array.from(cats)]
+  }, [products])
+
+  const filteredProducts = useMemo(() => {
+    if (selectedFilter === 'all') return products.slice(0, 8)
+    return products.filter((p) => p.category?.name === selectedFilter).slice(0, 8)
+  }, [products, selectedFilter])
 
   if (!products || products.length === 0) return null
 
@@ -60,13 +75,13 @@ export default function FeaturedProducts({
 
   return (
     <section
-      className={`w-full py-20 sm:py-28 border-t border-[#EADBCA] ${
-        isIvory ? 'bg-[#FFF9F0]' : 'bg-[#FFFFFF]'
+      className={`w-full py-24 sm:py-32 border-t border-[#EADBCA] ${
+        isIvory ? 'bg-[#FAF7F2]' : 'bg-[#FFFFFF]'
       }`}
     >
       <div className="site-container flex flex-col items-center">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 bg-[#B91C35]/10 border border-[#B91C35]/20 text-[#B91C35]">
             <Sparkles className="w-3.5 h-3.5" />
             <span>{badgeText}</span>
@@ -83,11 +98,29 @@ export default function FeaturedProducts({
           )}
         </div>
 
-        {/* Product Cards Grid: 4 cols desktop, 3 md, 2 mobile */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-7 w-full justify-center">
-          {products.map((product) => {
+        {/* Category Filter Pills (Spacious & Clean like Rathinam) */}
+        {filterCategories.length > 2 && (
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12 sm:mb-16">
+            {filterCategories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedFilter(cat)}
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold capitalize transition-all cursor-pointer ${
+                  selectedFilter === cat
+                    ? 'bg-[#B91C35] text-white shadow-md shadow-red-950/20'
+                    : 'bg-white text-stone-600 hover:text-[#10172A] border border-[#EADBCA] hover:border-stone-400'
+                }`}
+              >
+                {cat === 'all' ? 'All Crackers' : cat}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Product Cards Grid: 4 cols desktop, 3 md, 2 mobile with generous gaps */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8 w-full justify-center">
+          {filteredProducts.map((product) => {
             const discount = calcDiscount(product.mrp, product.offerPrice)
-            const savings = Math.round(product.mrp - product.offerPrice)
             const isAdded = addedId === product.id
             const imageUrl =
               product.images[0]?.url ||
@@ -96,7 +129,7 @@ export default function FeaturedProducts({
             return (
               <div
                 key={product.id}
-                className="group relative bg-[#FFFFFF] border border-[#EADBCA] hover:border-[#D6B36A] rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-black/5 flex flex-col justify-between"
+                className="group relative bg-[#FFFFFF] border border-[#EADBCA] hover:border-[#D6B36A] rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 flex flex-col justify-between"
               >
                 {/* Product Image Frame */}
                 <div className="relative aspect-square w-full overflow-hidden bg-[#F8F9FA]">
@@ -105,24 +138,17 @@ export default function FeaturedProducts({
                     alt={product.name}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover group-hover:scale-106 transition-transform duration-500"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40" />
 
-                  {/* Badges on Image */}
-                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none gap-1">
-                    {discount > 0 ? (
-                      <span className="px-2.5 py-1 rounded-lg bg-[#B91C35] text-white text-[11px] font-black uppercase tracking-wider shadow-sm">
+                  {/* Clean Discount Tag */}
+                  {discount > 0 && (
+                    <div className="absolute top-3 left-3 pointer-events-none">
+                      <span className="px-2.5 py-1 rounded-lg bg-[#B91C35] text-white text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-sm">
                         {discount}% OFF
                       </span>
-                    ) : (
-                      <span />
-                    )}
-
-                    <span className="px-2 py-0.5 rounded-lg bg-black/65 backdrop-blur-md text-[10px] text-white font-semibold border border-white/20 truncate max-w-[110px]">
-                      {product.category?.name || 'Crackers'}
-                    </span>
-                  </div>
+                    </div>
+                  )}
 
                   {!product.inStock && (
                     <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
@@ -133,34 +159,29 @@ export default function FeaturedProducts({
                   )}
                 </div>
 
-                {/* Card Content with comfortable internal spacing */}
+                {/* Card Content with spacious padding */}
                 <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between text-left">
                   <div className="mb-3">
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#D6B36A] block mb-1">
+                      {product.category?.name || 'Sivakasi Variety'}
+                    </span>
                     <h3 className="font-extrabold text-[#10172A] text-xs sm:text-base leading-snug line-clamp-2 group-hover:text-[#B91C35] transition-colors mb-2 min-h-[2rem] sm:min-h-[2.5rem]">
                       {product.name}
                     </h3>
-                    <div className="inline-block px-2.5 py-0.5 rounded-md bg-[#FFF9F0] border border-[#EADBCA] text-[11px] text-[#647084] font-medium">
-                      Packing: <span className="text-[#10172A] font-bold">{product.unit}</span>
-                    </div>
+                    <p className="text-[11px] sm:text-xs text-stone-500 font-medium">
+                      Packing: <strong className="text-stone-800">{product.unit}</strong>
+                    </p>
                   </div>
 
                   <div className="pt-3 border-t border-[#EADBCA]/70">
                     {/* Prices */}
-                    <div className="flex items-baseline justify-between mb-1.5">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-lg sm:text-2xl font-black text-[#10172A] tracking-tight font-mono">
-                          {formatPrice(product.offerPrice)}
-                        </span>
-                        {product.mrp > product.offerPrice && (
-                          <span className="text-xs text-[#647084] line-through font-mono">
-                            {formatPrice(product.mrp)}
-                          </span>
-                        )}
-                      </div>
-
-                      {savings > 0 && (
-                        <span className="text-[11px] font-bold text-[#27AE60] bg-green-50 px-2 py-0.5 rounded-md border border-green-200">
-                          Save {formatPrice(savings)}
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <span className="text-lg sm:text-2xl font-black text-[#10172A] tracking-tight font-mono">
+                        {formatPrice(product.offerPrice)}
+                      </span>
+                      {product.mrp > product.offerPrice && (
+                        <span className="text-xs sm:text-sm text-stone-400 line-through font-mono">
+                          {formatPrice(product.mrp)}
                         </span>
                       )}
                     </div>
@@ -169,11 +190,11 @@ export default function FeaturedProducts({
                     <button
                       onClick={() => handleAdd(product)}
                       disabled={!product.inStock}
-                      className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-md ${
+                      className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-sm ${
                         isAdded
-                          ? 'bg-[#27AE60] text-white shadow-green-600/20'
-                          : 'bg-[#B91C35] hover:bg-[#9E152B] text-white shadow-red-900/15 hover:scale-[1.01] active:scale-[0.99]'
-                      } disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer mt-3`}
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-[#B91C35] hover:bg-[#9E152B] text-white hover:shadow-md'
+                      } disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer`}
                     >
                       {isAdded ? (
                         <>
@@ -193,10 +214,10 @@ export default function FeaturedProducts({
         </div>
 
         {/* View All CTA */}
-        <div className="mt-12 sm:mt-16 text-center">
+        <div className="mt-14 sm:mt-18 text-center">
           <Link
             href="/products"
-            className="inline-flex items-center gap-2.5 px-8 py-3.5 sm:py-4 rounded-xl bg-transparent hover:bg-[#10172A]/5 text-[#10172A] font-extrabold text-sm sm:text-base border-2 border-[#10172A] transition-all hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-transparent hover:bg-stone-100 text-[#10172A] font-extrabold text-sm sm:text-base border-2 border-[#10172A] transition-all hover:-translate-y-0.5"
           >
             <span>Explore All 21+ Sivakasi Fireworks</span>
             <ArrowRight className="w-5 h-5 text-[#B91C35]" />
