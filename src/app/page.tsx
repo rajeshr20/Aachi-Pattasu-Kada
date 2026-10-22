@@ -10,10 +10,7 @@ import ProductCarousel from '@/components/products/ProductCarousel'
 import CategoryGrid from '@/components/home/CategoryGrid'
 import BrandGrid from '@/components/home/BrandGrid'
 import OurStory from '@/components/home/OurStory'
-import HowItWorks from '@/components/home/HowItWorks'
-import WhyChooseUs from '@/components/home/WhyChooseUs'
 import PromotionalBanner from '@/components/home/PromotionalBanner'
-import FAQSection from '@/components/home/FAQSection'
 import NewsletterSection from '@/components/home/NewsletterSection'
 import MapSection from '@/components/home/MapSection'
 import WhatsAppFab from '@/components/WhatsAppFab'
@@ -160,17 +157,8 @@ export default async function HomePage() {
       {/* 10. Our Story — From Sivakasi to Perumanallur */}
       <OurStory settings={settings} />
 
-      {/* 11. Simple & Safe — How it works */}
-      <HowItWorks />
-
-      {/* 12. The Aachi Promise — 6 Clean Cards */}
-      <WhyChooseUs />
-
-      {/* 13. Planning something big? — Bulk & Events CTA */}
+      {/* 11. Planning something big? — Bulk & Events CTA */}
       <PromotionalBanner settings={settings} />
-
-      {/* 14. Quick Answers — Frequently Asked Questions */}
-      <FAQSection />
 
       {/* 15. Newsletter Subscription */}
       <NewsletterSection settings={settings} />
