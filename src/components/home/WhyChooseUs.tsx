@@ -35,33 +35,35 @@ export default function WhyChooseUs() {
   ]
 
   return (
-    <section className="w-full py-20 sm:py-28 bg-[#0D1020] border-y border-white/5 relative overflow-hidden">
-      <div className="site-container relative z-10">
-        <div className="text-center mb-16 sm:mb-20">
-          <span className="text-xs uppercase tracking-widest text-[#F5A623] font-black bg-[#F5A623]/10 px-4 py-1.5 rounded-full border border-[#F5A623]/30">
-            The Aachi Crackers Advantage
+    <section className="w-full py-20 sm:py-28 bg-[#FFF9F0] border-t border-[#EADBCA]">
+      <div className="site-container">
+        {/* Section Header with 32-40px spacing */}
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+          <span className="text-xs uppercase tracking-widest text-[#B91C35] font-black bg-[#B91C35]/10 px-4 py-1.5 rounded-full border border-[#B91C35]/20">
+            The Aachi Crackers Difference
           </span>
-          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-4 mb-4">
+          <h2 className="text-3xl sm:text-5xl font-black text-[#10172A] tracking-tight mt-4 mb-4">
             Why Thousands Choose Us Every Diwali
           </h2>
-          <p className="text-gray-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            Experience reliable service, certified safety, and unmatched wholesale fireworks prices right here in Perumanallur.
+          <p className="text-[#647084] text-sm sm:text-base max-w-xl mx-auto leading-relaxed font-normal">
+            Experience reliable service, certified green safety, and authentic factory-direct fireworks from Sivakasi right here in Perumanallur.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        {/* Reasons Grid with 24-28px gap */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
           {reasons.map((r, i) => (
             <div
               key={i}
-              className="bg-[#121626] border border-white/10 rounded-2xl p-6 sm:p-7 hover:border-[#F5A623]/40 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40 group"
+              className="bg-[#FFFFFF] border border-[#EADBCA] rounded-2xl p-6 sm:p-8 hover:border-[#D6B36A] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 group text-left"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#F5A623]/10 text-[#F5A623] flex items-center justify-center mb-5 group-hover:bg-[#F5A623] group-hover:text-[#0B0D1A] transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-[#FFF9F0] border border-[#EADBCA] text-[#B91C35] flex items-center justify-center mb-6 group-hover:bg-[#B91C35] group-hover:text-white transition-colors">
                 <r.icon className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-white text-base mb-2 group-hover:text-[#F5A623] transition-colors">
+              <h3 className="font-extrabold text-[#10172A] text-lg mb-2.5 group-hover:text-[#B91C35] transition-colors">
                 {r.title}
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-[#647084] text-sm leading-relaxed font-normal">
                 {r.desc}
               </p>
             </div>

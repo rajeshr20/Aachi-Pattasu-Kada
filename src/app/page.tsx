@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 import HeroSection from '@/components/home/HeroSection'
 import CategoryGrid from '@/components/home/CategoryGrid'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
+import PromotionalBanner from '@/components/home/PromotionalBanner'
 import WhyChooseUs from '@/components/home/WhyChooseUs'
 import SafetyStrip from '@/components/home/SafetyStrip'
 import MapSection from '@/components/home/MapSection'
@@ -39,16 +40,13 @@ async function getHomePageData() {
       }).catch(() => []),
     ])
 
-    // Ensure categories are always populated
     const categories: any[] = categoriesFromDb && categoriesFromDb.length > 0 ? categoriesFromDb : DEFAULT_CATEGORIES
 
-    // Ensure featured products are always populated and visible
     let featuredProducts: any[] = featuredFromDb && featuredFromDb.length > 0 ? featuredFromDb : allActiveFromDb
     if (!featuredProducts || featuredProducts.length === 0) {
       featuredProducts = DEFAULT_PRODUCTS.filter((p) => p.isFeatured || p.isBestSeller).slice(0, 8)
     }
 
-    // Ensure new arrivals are always populated and distinct
     let newArrivals: any[] = newArrivalsFromDb && newArrivalsFromDb.length > 0 ? newArrivalsFromDb : []
     if (!newArrivals || newArrivals.length === 0) {
       const fallbackNew = DEFAULT_PRODUCTS.filter((p) => p.isNewArrival)
@@ -70,51 +68,53 @@ export default async function HomePage() {
   const { settings, categories, featuredProducts, newArrivals } = await getHomePageData()
 
   return (
-    <main className="min-h-screen bg-[#0B0D1A] flex flex-col">
+    <main className="min-h-screen bg-[#10172A] flex flex-col">
+      {/* Refined Navigation Header */}
       <Header settings={settings} />
 
-      {/* Hero Section */}
+      {/* Cinematic Fireworks Hero Section */}
       <HeroSection settings={settings} />
 
-      {/* Explore Categories Collection */}
+      {/* Category Grid Collection (Warm Ivory) */}
       <CategoryGrid categories={categories} />
 
-      {/* Best Selling Firecrackers with Gold Festive Tone */}
+      {/* Best Selling Products (Pure White Catalog Grid) */}
       <FeaturedProducts
         products={featuredProducts}
-        title="⭐ Best Selling Diwali Crackers"
-        subtitle="Top customer favorites from Sivakasi with guaranteed factory wholesale discounts up to 80% off"
+        title="Best Selling Diwali Crackers"
+        subtitle="Top customer favorites from Sivakasi with guaranteed factory wholesale pricing"
         badgeText="Best Sellers • Maximum Savings"
-        accent="gold"
-        bgTone="deep"
+        bgTone="white"
       />
 
-      {/* Trending & New 2026 Arrivals with Crimson Accent */}
+      {/* Cinematic Dark Promotional Feature Banner */}
+      <PromotionalBanner />
+
+      {/* Trending & New 2026 Formulations (Warm Ivory) */}
       <FeaturedProducts
         products={newArrivals}
-        title="🎆 Trending & New 2026 Arrivals"
-        subtitle="Experience our latest certified eco-friendly formulations, aerial repeaters, and dazzling sparkles"
+        title="Trending & New 2026 Arrivals"
+        subtitle="Experience our latest certified eco-friendly formulations, sparkling repeaters, and vibrant aerial bursts"
         badgeText="Brand New 2026 Stock"
-        accent="crimson"
-        bgTone="navy"
+        bgTone="ivory"
       />
 
-      {/* Why Choose Us */}
+      {/* Why Choose Us (Brand Trust & Benefits) */}
       <WhyChooseUs />
 
-      {/* Safety Strip */}
+      {/* Responsible Fireworks Safety Guidelines */}
       <SafetyStrip />
 
       {/* Frequently Asked Questions */}
       <FAQSection />
 
-      {/* Landmark Map & Location */}
+      {/* Landmark Store Map & Location */}
       <MapSection settings={settings} />
 
-      {/* Footer */}
+      {/* Midnight Navy Multi-Column Footer */}
       <Footer settings={settings} />
 
-      {/* WhatsApp Floating Button */}
+      {/* WhatsApp Quick Floating Action */}
       <WhatsAppFab settings={settings} />
     </main>
   )

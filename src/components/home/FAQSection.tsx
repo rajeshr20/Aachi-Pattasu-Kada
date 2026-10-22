@@ -29,45 +29,45 @@ export default function FAQSection() {
   ]
 
   return (
-    <section className="w-full py-20 sm:py-28 bg-[#0B0D1A]">
+    <section className="w-full py-20 sm:py-28 bg-[#FFF9F0] border-t border-[#EADBCA]">
       <div className="site-container-narrow">
-      <div className="text-center mb-14 sm:mb-18">
-        <span className="text-xs uppercase tracking-widest text-[#F5A623] font-black bg-[#F5A623]/10 px-4 py-1.5 rounded-full border border-[#F5A623]/30">
-          Got Questions?
-        </span>
-        <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-4 mb-4">
-          Frequently Asked Questions
-        </h2>
-        <p className="text-gray-300 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
-          Everything you need to know about our wholesale fireworks, ordering, safety, and delivery.
-        </p>
-      </div>
+        <div className="text-center mb-12 sm:mb-16">
+          <span className="text-xs uppercase tracking-widest text-[#B91C35] font-black bg-[#B91C35]/10 px-4 py-1.5 rounded-full border border-[#B91C35]/20">
+            Got Questions?
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-black text-[#10172A] tracking-tight mt-4 mb-4">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-[#647084] text-sm sm:text-base max-w-lg mx-auto leading-relaxed font-normal">
+            Everything you need to know about our wholesale fireworks, ordering, safety, and delivery.
+          </p>
+        </div>
 
-      <div className="space-y-4 sm:space-y-5">
-        {faqs.map((faq, i) => (
-          <details
-            key={i}
-            className="group bg-[#121626] border border-white/10 rounded-2xl overflow-hidden hover:border-[#F5A623]/30 transition-colors"
-          >
-            <summary className="p-5 sm:p-6 cursor-pointer flex items-center justify-between gap-4 list-none select-none">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#F5A623] shrink-0">
-                  <HelpCircle className="w-4 h-4" />
+        <div className="space-y-4 sm:space-y-5">
+          {faqs.map((faq, i) => (
+            <details
+              key={i}
+              className="group bg-[#FFFFFF] border border-[#EADBCA] rounded-2xl overflow-hidden hover:border-[#D6B36A] transition-colors shadow-xs"
+            >
+              <summary className="p-5 sm:p-6 cursor-pointer flex items-center justify-between gap-4 list-none select-none">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-9 h-9 rounded-xl bg-[#FFF9F0] border border-[#EADBCA] flex items-center justify-center text-[#B91C35] shrink-0">
+                    <HelpCircle className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-extrabold text-[#10172A] text-sm sm:text-base group-hover:text-[#B91C35] transition-colors">
+                    {faq.q}
+                  </h3>
                 </div>
-                <h3 className="font-bold text-white text-sm sm:text-base group-hover:text-[#F5A623] transition-colors">
-                  {faq.q}
-                </h3>
+                <span className="w-8 h-8 rounded-full bg-[#FFF9F0] border border-[#EADBCA] flex items-center justify-center text-[#10172A] group-hover:text-[#B91C35] group-open:rotate-45 transition-transform duration-200 text-lg font-bold shrink-0">
+                  +
+                </span>
+              </summary>
+              <div className="px-6 pb-6 text-[#647084] text-sm leading-relaxed border-t border-[#EADBCA] pt-4 font-normal">
+                {faq.a}
               </div>
-              <span className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-[#F5A623] group-open:rotate-45 transition-transform duration-200 text-lg font-bold shrink-0">
-                +
-              </span>
-            </summary>
-            <div className="px-6 pb-6 text-gray-300 text-sm leading-relaxed border-t border-white/5 pt-4">
-              {faq.a}
-            </div>
-          </details>
-        ))}
-      </div>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   )

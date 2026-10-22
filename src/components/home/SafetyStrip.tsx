@@ -12,42 +12,42 @@ export default function SafetyStrip() {
   ]
 
   return (
-    <section className="w-full py-16 sm:py-20 bg-gradient-to-r from-[#181D33] via-[#121626] to-[#181D33] border-y border-white/10">
+    <section className="w-full py-16 sm:py-20 bg-[#FFFFFF] border-t border-[#EADBCA]">
       <div className="site-container">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10 sm:mb-12">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center border border-red-500/20">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-red-50 text-[#B91C35] flex items-center justify-center border border-red-200 shrink-0">
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-extrabold text-white text-lg sm:text-xl">
-                Fireworks Safety Rules (Diwali Safety First)
+              <h2 className="font-extrabold text-[#10172A] text-lg sm:text-2xl tracking-tight">
+                Diwali Fireworks Safety Norms
               </h2>
-              <p className="text-xs text-gray-400">
-                Celebrate Diwali with happiness and zero accidents. Follow these critical safety norms.
+              <p className="text-xs sm:text-sm text-[#647084] mt-0.5">
+                Celebrate Diwali with happiness and zero accidents. Follow these critical safety precautions.
               </p>
             </div>
           </div>
           <Link
             href="/safety"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#F5A623] hover:underline self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B91C35] hover:underline self-start sm:self-auto shrink-0"
           >
             <span>Read Complete Safety Guide</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
           {tips.map((t, idx) => (
             <div
               key={idx}
-              className="bg-[#0B0D1A]/80 border border-white/5 rounded-xl p-4 text-center flex flex-col items-center justify-center gap-2 hover:border-[#F5A623]/30 transition-colors"
+              className="bg-[#FFF9F0] border border-[#EADBCA] rounded-2xl p-5 text-center flex flex-col items-center justify-center gap-2.5 hover:border-[#D6B36A] transition-colors"
             >
-              <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-[#F5A623]">
-                <t.icon className="w-4 h-4" />
+              <div className="w-10 h-10 rounded-xl bg-white border border-[#EADBCA] flex items-center justify-center text-[#B91C35] shadow-xs">
+                <t.icon className="w-5 h-5" />
               </div>
-              <p className="text-white font-bold text-xs">{t.title}</p>
-              <p className="text-gray-400 text-[11px] leading-tight">{t.text}</p>
+              <p className="text-[#10172A] font-extrabold text-xs">{t.title}</p>
+              <p className="text-[#647084] text-[11px] leading-relaxed font-normal">{t.text}</p>
             </div>
           ))}
         </div>

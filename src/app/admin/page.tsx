@@ -1,109 +1,171 @@
 import { prisma } from '@/lib/prisma'
-import { ShoppingBag, Users, Package, TrendingUp, Clock, CheckCircle, AlertTriangle, IndianRupee } from 'lucide-react'
+import { ShoppingBag, Package, TrendingUp, Clock, CheckCircle, IndianRupee, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
+import { DEFAULT_PRODUCTS, DEFAULT_CATEGORIES } from '@/lib/catalogData'
 
 export default async function AdminDashboard() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const [
-    totalOrders,
-    todayOrders,
-    pendingOrders,
-    confirmedOrders,
-    totalRevenue,
-    recentOrders,
-    lowStockProducts,
-    totalProducts,
-  ] = await Promise.all([
-    prisma.order.count(),
-    prisma.order.count({ where: { createdAt: { gte: today } } }),
-    prisma.order.count({ where: { status: 'RECEIVED' } }),
-    prisma.order.count({ where: { status: { in: ['CONFIRMED', 'PACKED', 'DISPATCHED'] } } }),
-    prisma.order.aggregate({ _sum: { total: true }, where: { status: { not: 'CANCELLED' } } }),
-    prisma.order.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 8,
-      include: { items: true },
-    }),
-    prisma.product.findMany({
-      where: { isDeleted: false, stock: { lte: 10 }, inStock: true },
-      orderBy: { stock: 'asc' },
-      take: 5,
-    }),
-    prisma.product.count({ where: { isDeleted: false } }),
-  ])
+  let totalOrders = 0
+  let todayOrders = 0
+  let pendingOrders = 0
+  let confirmedOrders = 0
+  let totalRevenue = 0
+  let recentOrders: any[] = []
+  let lowStockProducts: any[] = []
+  let totalProducts = DEFAULT_PRODUCTS.length
+
+  try {
+    const [
+      dbTotalOrders,
+      dbTodayOrders,
+      dbPendingOrders,
+      dbConfirmedOrders,
+      dbRevenue,
+      dbRecentOrders,
+      dbLowStock,
+      dbTotalProducts,
+    ] = await Promise.all([
+      prisma.order.count().catch(() => 0),
+      prisma.order.count({ where: { createdAt: { gte: today } } }).catch(() => 0),
+      prisma.order.count({ where: { status: 'RECEIVED' } }).catch(() => 0),
+      prisma.order.count({ where: { status: { in: ['CONFIRMED', 'PACKED', 'DISPATCHED'] } } }).catch(() => 0),
+      prisma.order.aggregate({ _sum: { total: true }, where: { status: { not: 'CANCELLED' } } }).catch(() => ({ _sum: { total: 0 } })),
+      prisma.order.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 8,
+        include: { items: true },
+      }).catch(() => []),
+      prisma.product.findMany({
+        where: { isDeleted: false, stock: { lte: 25 }, inStock: true },
+        orderBy: { stock: 'asc' },
+        take: 5,
+      }).catch(() => []),
+      prisma.product.count({ where: { isDeleted: false } }).catch(() => DEFAULT_PRODUCTS.length),
+    ])
+
+    totalOrders = dbTotalOrders
+    todayOrders = dbTodayOrders
+    pendingOrders = dbPendingOrders
+    confirmedOrders = dbConfirmedOrders
+    totalRevenue = dbRevenue._sum?.total || 0
+    recentOrders = dbRecentOrders
+    lowStockProducts = dbLowStock
+    totalProducts = dbTotalProducts || DEFAULT_PRODUCTS.length
+  } catch (err) {
+    console.warn('AdminDashboard: Database read warning, using safe fallbacks:', err)
+  }
 
   const stats = [
-    { label: 'Total Orders', value: totalOrders, icon: ShoppingBag, color: 'text-[#F5A623]', bg: 'bg-[#F5A623]/10' },
-    { label: "Today's Orders", value: todayOrders, icon: TrendingUp, color: 'text-[#2ECC71]', bg: 'bg-[#2ECC71]/10' },
-    { label: 'Pending Confirmation', value: pendingOrders, icon: Clock, color: 'text-[#E67E22]', bg: 'bg-[#E67E22]/10' },
-    { label: 'Active Orders', value: confirmedOrders, icon: CheckCircle, color: 'text-[#3498DB]', bg: 'bg-[#3498DB]/10' },
-    { label: 'Total Revenue', value: formatPrice(totalRevenue._sum.total || 0), icon: IndianRupee, color: 'text-[#F5A623]', bg: 'bg-[#F5A623]/10' },
-    { label: 'Products', value: totalProducts, icon: Package, color: 'text-[#8E44AD]', bg: 'bg-[#8E44AD]/10' },
+    { label: 'Total Orders', value: totalOrders, icon: ShoppingBag, color: 'text-[#D6B36A]', bg: 'bg-[#D6B36A]/10' },
+    { label: "Today's Enquiries", value: todayOrders, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+    { label: 'Pending Processing', value: pendingOrders, icon: Clock, color: 'text-[#B91C35]', bg: 'bg-[#B91C35]/15' },
+    { label: 'Confirmed Dispatches', value: confirmedOrders, icon: CheckCircle, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+    { label: 'Total Order Value', value: formatPrice(totalRevenue), icon: IndianRupee, color: 'text-[#D6B36A]', bg: 'bg-[#D6B36A]/10' },
+    { label: 'Active Catalog Items', value: totalProducts, icon: Package, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   ]
 
   const statusColors: Record<string, string> = {
-    RECEIVED: 'status-received',
-    CONFIRMED: 'status-confirmed',
-    PACKED: 'status-packed',
-    DISPATCHED: 'status-dispatched',
-    DELIVERED: 'status-delivered',
-    CANCELLED: 'status-cancelled',
+    RECEIVED: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+    CONFIRMED: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+    PACKED: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
+    DISPATCHED: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30',
+    DELIVERED: 'bg-emerald-600/30 text-emerald-200 border border-emerald-500/40',
+    CANCELLED: 'bg-red-500/20 text-red-300 border border-red-500/30',
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
-      <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
-        <p className="text-gray-400 text-sm mt-0.5">Overview of store operations, orders and inventory</p>
+    <div className="space-y-8 pt-12 lg:pt-0">
+      {/* Page Title */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div>
+          <span className="text-xs uppercase tracking-widest text-[#D6B36A] font-bold">Executive Control</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">Store Dashboard</h1>
+          <p className="text-slate-400 text-sm mt-0.5">Overview of customer cracker enquiries, stock levels, and store performance</p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/products/new"
+            className="px-4 py-2.5 bg-[#B91C35] hover:bg-[#991429] text-white font-bold text-xs rounded-xl shadow-lg transition-all"
+          >
+            + Add New Cracker
+          </Link>
+          <Link
+            href="/products"
+            target="_blank"
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs rounded-xl border border-white/10 transition-all"
+          >
+            View Live Store ↗
+          </Link>
+        </div>
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {stats.map(stat => (
-          <div key={stat.label} className="glass-card p-4">
+          <div key={stat.label} className="bg-[#121626] border border-white/10 rounded-2xl p-5 hover:border-[#D6B36A]/40 transition-all">
             <div className="flex items-start justify-between mb-3">
-              <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center`}>
+              <div className={`w-11 h-11 ${stat.bg} rounded-xl flex items-center justify-center`}>
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
             </div>
-            <p className="text-2xl font-extrabold text-white">{stat.value}</p>
-            <p className="text-gray-400 text-sm mt-0.5">{stat.label}</p>
+            <p className="text-2xl sm:text-3xl font-extrabold text-white font-mono">{stat.value}</p>
+            <p className="text-slate-400 text-xs sm:text-sm mt-1">{stat.label}</p>
           </div>
         ))}
       </div>
 
+      {/* Tables Row */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Recent orders */}
-        <div className="lg:col-span-2 glass-card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-bold text-white">Recent Orders</h2>
-            <Link href="/admin/orders" className="text-[#F5A623] text-sm hover:underline">View All →</Link>
+        <div className="lg:col-span-2 bg-[#121626] border border-white/10 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-5 pb-3 border-b border-white/10">
+            <div>
+              <h2 className="font-extrabold text-white text-base">Recent Enquiries & Orders</h2>
+              <p className="text-xs text-slate-400">Latest customer submissions from website</p>
+            </div>
+            <Link href="/admin/orders" className="text-[#D6B36A] text-xs font-bold hover:underline">
+              View All Orders →
+            </Link>
           </div>
-          <div className="space-y-2">
+
+          <div className="space-y-3">
             {recentOrders.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-8">No orders yet</p>
+              <div className="text-center py-12 px-4 border border-dashed border-white/10 rounded-xl">
+                <ShoppingBag className="w-10 h-10 text-slate-500 mx-auto mb-2 opacity-50" />
+                <p className="text-slate-300 font-bold text-sm">No Live Orders Yet</p>
+                <p className="text-slate-500 text-xs mt-1 max-w-sm mx-auto">
+                  Customer enquiries placed via the catalog checkout or WhatsApp will be recorded here with status tracking.
+                </p>
+              </div>
             ) : (
               recentOrders.map(order => (
                 <Link
                   key={order.id}
                   href={`/admin/orders/${order.id}`}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#D6B36A]/30 transition-all"
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-mono font-bold text-white text-sm">{order.orderNumber}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[order.status] || ''}`}>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-mono font-bold text-white text-sm">#{order.orderNumber}</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${statusColors[order.status] || ''}`}>
                         {order.status}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-xs">{order.customerName} • {order.items.length} items</p>
+                    <p className="text-xs text-slate-400 truncate">
+                      {order.customerName} • {order.customerPhone}
+                    </p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-[#F5A623] font-bold text-sm">{formatPrice(order.total)}</p>
-                    <p className="text-gray-500 text-xs">{new Date(order.createdAt).toLocaleDateString('en-IN')}</p>
+                  <div className="text-right shrink-0">
+                    <p className="font-mono font-bold text-emerald-400 text-sm">
+                      {formatPrice(order.total)}
+                    </p>
+                    <p className="text-[10px] text-slate-500">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
                 </Link>
               ))
@@ -111,59 +173,42 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Low stock */}
-        <div className="glass-card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-bold text-white flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-[#E67E22]" />
-              Low Stock
-            </h2>
-            <Link href="/admin/products" className="text-[#F5A623] text-xs hover:underline">Manage →</Link>
-          </div>
-          {lowStockProducts.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-4xl mb-2">✅</p>
-              <p className="text-gray-400 text-sm">All products well stocked</p>
+        {/* Catalog Overview & Quick Actions */}
+        <div className="bg-[#121626] border border-white/10 rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/10">
+              <Sparkles className="w-5 h-5 text-[#D6B36A]" />
+              <h2 className="font-extrabold text-white text-base">Catalog Inventory</h2>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {lowStockProducts.map(p => (
-                <div key={p.id} className="flex items-center justify-between">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-white text-xs truncate">{p.name}</p>
-                    <p className="text-gray-500 text-xs truncate">{p.unit}</p>
+
+            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+              Your store contains {DEFAULT_CATEGORIES.length} active Sivakasi categories and {DEFAULT_PRODUCTS.length} standard cracker SKUs.
+            </p>
+
+            <div className="space-y-2.5">
+              {DEFAULT_CATEGORIES.slice(0, 5).map(cat => (
+                <div key={cat.id} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-xs">
+                  <div className="flex items-center gap-2 text-white font-medium">
+                    <span>{cat.icon}</span>
+                    <span>{cat.name}</span>
                   </div>
-                  <span className={`text-sm font-bold px-2 py-0.5 rounded-full ml-2 ${
-                    p.stock <= 5 ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
-                  }`}>
-                    {p.stock} left
+                  <span className="text-[11px] text-[#D6B36A] font-bold">
+                    {DEFAULT_PRODUCTS.filter(p => p.category?.id === cat.id || p.category?.name === cat.name).length} items
                   </span>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      {/* Quick actions */}
-      <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { href: '/admin/orders', label: 'Manage Orders', icon: ShoppingBag, color: 'from-[#F5A623] to-[#FFD166]' },
-          { href: '/admin/products/new', label: 'Add Product', icon: Package, color: 'from-[#27AE60] to-[#2ECC71]' },
-          { href: '/admin/categories', label: 'Categories', icon: Users, color: 'from-[#8E44AD] to-[#9B59B6]' },
-          { href: '/admin/settings', label: 'Settings', icon: AlertTriangle, color: 'from-[#C0392B] to-[#E74C3C]' },
-        ].map(action => (
-          <Link
-            key={action.href}
-            href={action.href}
-            className={`glass-card p-4 hover:scale-[1.02] transition-transform flex flex-col items-center gap-2 text-center`}
-          >
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center`}>
-              <action.icon className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-white text-sm font-medium">{action.label}</span>
-          </Link>
-        ))}
+          <div className="pt-6 border-t border-white/10 mt-6">
+            <Link
+              href="/admin/products"
+              className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-center text-xs font-bold text-white block transition-all"
+            >
+              Manage Complete Inventory →
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )
