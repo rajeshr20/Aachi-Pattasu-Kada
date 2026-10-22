@@ -31,7 +31,7 @@ export default function SafetyPage() {
       <Header />
 
       {/* Cinematic Header Banner */}
-      <section className="bg-[#10172A] text-white pt-32 pb-16 border-b border-[#D6B36A]/20">
+      <section className="bg-[#10172A] text-white pt-36 sm:pt-44 pb-16 border-b border-[#D6B36A]/20">
         <div className="site-container text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D6B36A]/10 border border-[#D6B36A]/30 text-[#D6B36A] text-xs font-bold uppercase tracking-wider mb-4">
             <ShieldCheck className="w-4 h-4" />

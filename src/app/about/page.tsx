@@ -31,9 +31,9 @@ export default function AboutPage() {
     <div className="min-h-screen bg-[#FFF9F0] text-[#10172A] flex flex-col">
       <Header />
 
-      <main className="flex-1 pt-24 sm:pt-28 pb-20">
+      <main className="flex-1 pb-20">
         {/* Hero Banner (Midnight Navy) */}
-        <div className="bg-[#10172A] text-white py-14 sm:py-20 border-b border-[#D6B36A]/20 relative overflow-hidden">
+        <div className="bg-[#10172A] text-white pt-36 sm:pt-44 pb-14 sm:pb-20 border-b border-[#D6B36A]/20 relative overflow-hidden">
           <div className="site-container text-center max-w-3xl mx-auto">
             <span className="text-xs uppercase tracking-widest text-[#D6B36A] font-black bg-[#D6B36A]/10 px-4 py-1.5 rounded-full border border-[#D6B36A]/30 inline-block mb-4">
               Our Story & Heritage

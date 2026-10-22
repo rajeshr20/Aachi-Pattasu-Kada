@@ -73,9 +73,9 @@ export default function TrackOrderPage() {
     <div className="min-h-screen bg-[#0B0D1A] text-white flex flex-col">
       <Header />
 
-      <main className="flex-1 pb-16 px-4 sm:px-6 max-w-4xl mx-auto w-full" style={{ paddingTop: '120px' }}>
+      <main className="flex-1 pt-36 sm:pt-44 pb-20 px-4 sm:px-6 max-w-4xl mx-auto w-full">
         <div className="text-center mb-8">
-          <span className="text-xs uppercase tracking-widest text-[#F5A623] font-semibold bg-[#F5A623]/10 px-3 py-1 rounded-full border border-[#F5A623]/20">
+          <span className="text-xs uppercase tracking-widest text-[#D6B36A] font-bold bg-[#D6B36A]/10 px-3.5 py-1.5 rounded-full border border-[#D6B36A]/30">
             Live Order Status
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white mt-3 mb-2">

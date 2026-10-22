@@ -6,9 +6,12 @@ import { formatPrice } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { AlertTriangle, Phone, MapPin, Truck, Store, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function CheckoutPage() {
-  const { items, total, clearCart } = useCartStore()
+  const { items, clearCart } = useCartStore()
+  const total = items.reduce((sum, item) => sum + (Number(item.offerPrice) || 0) * (Number(item.quantity) || 0), 0)
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -90,10 +93,12 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0D1A] pb-24 px-4 sm:px-6" style={{ paddingTop: '120px' }}>
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Place Order Enquiry</h1>
-        <p className="text-gray-400 mb-8 text-sm sm:text-base">Direct Sivakasi factory firecrackers. Quick confirmation via WhatsApp/phone.</p>
+    <div className="min-h-screen bg-[#10172A] text-white flex flex-col justify-between">
+      <Header />
+      <main className="flex-1 pt-36 sm:pt-44 pb-24 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-white mb-2">Place Order Enquiry</h1>
+          <p className="text-slate-300 mb-8 text-sm sm:text-base">Direct Sivakasi factory firecrackers. Quick confirmation via WhatsApp/phone.</p>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Form */}
@@ -253,6 +258,8 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
+    <Footer />
+  </div>
   )
 }

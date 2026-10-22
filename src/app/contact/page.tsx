@@ -40,7 +40,7 @@ export default function ContactPage() {
       <Header />
 
       {/* Cinematic Header Banner */}
-      <section className="bg-[#10172A] text-white pt-32 pb-16 border-b border-[#D6B36A]/20">
+      <section className="bg-[#10172A] text-white pt-36 sm:pt-44 pb-16 border-b border-[#D6B36A]/20">
         <div className="site-container text-center">
           <span className="inline-block text-xs uppercase tracking-widest text-[#D6B36A] font-bold bg-[#D6B36A]/10 px-3.5 py-1.5 rounded-full border border-[#D6B36A]/30 mb-4">
             Customer Support & Store Visits

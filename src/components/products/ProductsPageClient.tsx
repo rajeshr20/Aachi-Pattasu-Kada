@@ -22,6 +22,7 @@ interface Product {
   id: string
   name: string
   nameTa?: string
+  slug?: string
   mrp: number
   offerPrice: number
   unit: string
@@ -29,7 +30,7 @@ interface Product {
   isBestSeller?: boolean
   isFeatured?: boolean
   images: { url: string }[]
-  category: { name: string; nameTa?: string; slug: string }
+  category: { id?: string; name: string; nameTa?: string; slug: string }
 }
 
 interface Category {
@@ -46,6 +47,48 @@ interface Props {
   initialCategory?: string
   initialSearch?: string
   minOrder: number
+}
+
+// Curated authentic celebration photos ensuring zero city skyscrapers or balloons
+const PRODUCT_IMAGE_FALLBACKS: Record<string, string> = {
+  'red-bijili-crackers': 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&auto=format&fit=crop&q=80',
+  'classic-28-chorsa-ladi': 'https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?w=800&auto=format&fit=crop&q=80',
+  'deluxe-100-sound-garland': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop&q=80',
+  'mega-1000-wala-sound-ladi': 'https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?w=800&auto=format&fit=crop&q=80',
+  'special-ground-chakkar-big': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop&q=80',
+  'deluxe-ground-chakkar-deluxe': 'https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=800&auto=format&fit=crop&q=80',
+  'rotating-disco-wheel': 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&auto=format&fit=crop&q=80',
+  'tri-colour-flower-pots': 'https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?w=800&auto=format&fit=crop&q=80',
+  'grand-ashoka-flower-pot': 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&auto=format&fit=crop&q=80',
+  'peacock-feathers-fountain': 'https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=800&auto=format&fit=crop&q=80',
+  'gold-sparklers-15cm': 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&auto=format&fit=crop&q=80',
+  'colour-sparklers-30cm': 'https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=800&auto=format&fit=crop&q=80',
+  'electric-sparklers-50cm': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop&q=80',
+  'baby-rocket': 'https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?w=800&auto=format&fit=crop&q=80',
+  'whistling-rocket-bomb': 'https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=800&auto=format&fit=crop&q=80',
+  'luna-parachute-rocket': 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&auto=format&fit=crop&q=80',
+  '7-shots-colour-chaser': 'https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?w=800&auto=format&fit=crop&q=80',
+  '12-shots-multi-colour': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop&q=80',
+  '30-shots-mega-display': 'https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=800&auto=format&fit=crop&q=80',
+  'family-delight-gift-box': 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80',
+  'vip-royal-celebration-box': 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80',
+}
+
+function resolveProductImage(p: Product): string {
+  const current = p.images?.[0]?.url
+  // If image is city skyline (477959858617) or balloons (508873696983) or empty, use curated photo
+  if (
+    !current ||
+    current.includes('photo-1477959858617') ||
+    current.includes('photo-1508873696983') ||
+    current.includes('photo-1533230307785')
+  ) {
+    if (p.slug && PRODUCT_IMAGE_FALLBACKS[p.slug]) {
+      return PRODUCT_IMAGE_FALLBACKS[p.slug]
+    }
+    return 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&auto=format&fit=crop&q=80'
+  }
+  return current
 }
 
 export default function ProductsPageClient({
@@ -68,8 +111,12 @@ export default function ProductsPageClient({
 
   const filtered = useMemo(() => {
     let list = products
-    if (activeCategory !== 'all') list = list.filter((p) => p.category?.slug === activeCategory)
-    if (inStockOnly) list = list.filter((p) => p.inStock)
+    if (activeCategory !== 'all') {
+      list = list.filter((p) => p.category?.slug === activeCategory)
+    }
+    if (inStockOnly) {
+      list = list.filter((p) => p.inStock)
+    }
     if (search.trim()) {
       const q = search.toLowerCase()
       list = list.filter(
@@ -100,7 +147,7 @@ export default function ProductsPageClient({
       mrp: p.mrp,
       offerPrice: p.offerPrice,
       unit: p.unit,
-      imageUrl: p.images[0]?.url,
+      imageUrl: resolveProductImage(p),
       categoryName: p.category?.name || 'Crackers',
     })
     setAddedId(p.id)
@@ -109,70 +156,73 @@ export default function ProductsPageClient({
   }
 
   return (
-    <div className="bg-[#FFF9F0] min-h-screen text-[#10172A] pt-24 sm:pt-28 pb-24">
-      {/* Top Banner (Midnight Navy Header) */}
-      <div className="bg-[#10172A] text-white py-14 sm:py-20 border-b border-[#D6B36A]/20 relative overflow-hidden">
+    <div className="bg-[#FAF7F2] min-h-screen text-[#10172A] pb-24">
+      {/* Top Banner: Starts cleanly below fixed header with generous clearance */}
+      <section className="bg-[#10172A] text-white pt-36 sm:pt-44 pb-14 sm:pb-20 border-b border-[#D6B36A]/20 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#D6B36A]/10 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="site-container relative z-10 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D6B36A]/10 border border-[#D6B36A]/30 text-[#D6B36A] text-xs font-black uppercase tracking-widest mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D6B36A]/10 border border-[#D6B36A]/30 text-[#D6B36A] text-xs font-bold uppercase tracking-widest mb-4">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Direct Sivakasi Factory Wholesale Price</span>
+            <span>Direct Sivakasi Factory Wholesale Rates</span>
           </div>
+
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-4">
             Browse All <span className="text-gold-gradient">Firecrackers</span>
           </h1>
-          <p className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
-            Authentic Sivakasi Green Crackers at wholesale factory rates with up to 80% discount. Select your items to submit an enquiry or quotation.
+
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto font-normal">
+            Authentic Sivakasi Green Crackers at factory wholesale rates with up to 80% discount. Select your favourite items to build an order enquiry.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-300">
-            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 font-medium">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs text-slate-300">
+            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 font-semibold">
               <ShieldCheck className="w-4 h-4 text-[#D6B36A]" />
               100% Certified Green Crackers
             </span>
-            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 font-medium">
+            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 font-semibold">
               <Store className="w-4 h-4 text-[#B91C35]" />
               Opposite Aachi Mess, Perumanallur
             </span>
-            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 font-medium">
+            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 font-semibold">
               <Truck className="w-4 h-4 text-emerald-400" />
               Min. Order: {formatPrice(minOrder)}
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="site-container pt-8 sm:pt-12">
-        {/* Search, Sort & Filters Console */}
-        <div className="bg-[#FFFFFF] border border-[#EADBCA] rounded-2xl p-4 sm:p-6 mb-8 shadow-sm">
+      {/* Main Content Area */}
+      <main className="site-container pt-8 sm:pt-12">
+        {/* Search, Sort & View Controls */}
+        <div className="bg-white border border-[#EADBCA] rounded-2xl p-4 sm:p-6 mb-8 shadow-sm">
           <div className="flex flex-col md:flex-row gap-3.5 items-center">
             {/* Search Input */}
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#647084]" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
               <input
                 type="text"
                 placeholder="Search crackers (e.g. Bijili, Chakkar, Flower Pot, Rocket, Sparklers)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-10 py-3 bg-[#FFF9F0] border border-[#EADBCA] rounded-xl text-[#10172A] placeholder-gray-500 text-sm focus:outline-none focus:border-[#B91C35] transition-colors"
+                className="w-full pl-11 pr-10 py-3 bg-[#FAF7F2] border border-[#EADBCA] rounded-xl text-[#10172A] placeholder-stone-400 text-sm focus:outline-none focus:border-[#B91C35] focus:bg-white transition-all"
               />
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black p-1"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-black p-1"
                 >
                   <X className="w-4 h-4" />
                 </button>
               )}
             </div>
 
-            {/* Sort & In Stock Filters */}
+            {/* Sort & In-Stock Controls */}
             <div className="flex items-center gap-2.5 w-full md:w-auto justify-between md:justify-end">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3.5 py-3 bg-[#FFF9F0] border border-[#EADBCA] rounded-xl text-[#10172A] text-xs font-bold focus:outline-none focus:border-[#B91C35]"
+                className="px-3.5 py-3 bg-[#FAF7F2] border border-[#EADBCA] rounded-xl text-[#10172A] text-xs font-bold focus:outline-none focus:border-[#B91C35] cursor-pointer"
               >
                 <option value="default">Sort: Recommended</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -180,7 +230,7 @@ export default function ProductsPageClient({
                 <option value="discount">Highest Discount</option>
               </select>
 
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#10172A] bg-[#FFF9F0] px-3.5 py-3 rounded-xl border border-[#EADBCA] whitespace-nowrap">
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#10172A] bg-[#FAF7F2] px-3.5 py-3 rounded-xl border border-[#EADBCA] whitespace-nowrap">
                 <input
                   type="checkbox"
                   checked={inStockOnly}
@@ -191,13 +241,13 @@ export default function ProductsPageClient({
               </label>
 
               {/* View Toggle */}
-              <div className="flex items-center bg-[#FFF9F0] border border-[#EADBCA] rounded-xl p-1">
+              <div className="flex items-center bg-[#FAF7F2] border border-[#EADBCA] rounded-xl p-1">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg transition-all ${
                     viewMode === 'grid'
                       ? 'bg-[#B91C35] text-white shadow-xs'
-                      : 'text-[#647084] hover:text-[#10172A]'
+                      : 'text-stone-500 hover:text-[#10172A]'
                   }`}
                   title="Grid View"
                 >
@@ -208,9 +258,9 @@ export default function ProductsPageClient({
                   className={`p-2 rounded-lg transition-all ${
                     viewMode === 'table'
                       ? 'bg-[#B91C35] text-white shadow-xs'
-                      : 'text-[#647084] hover:text-[#10172A]'
+                      : 'text-stone-500 hover:text-[#10172A]'
                   }`}
-                  title="List View"
+                  title="Table View"
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -218,14 +268,14 @@ export default function ProductsPageClient({
             </div>
           </div>
 
-          {/* Category Filter Chips */}
+          {/* Category Filter Pills */}
           <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-[#EADBCA]/60">
             <button
               onClick={() => setActiveCategory('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeCategory === 'all'
                   ? 'bg-[#B91C35] text-white shadow-md shadow-red-950/20'
-                  : 'bg-[#FFF9F0] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
+                  : 'bg-[#FAF7F2] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
               }`}
             >
               All Categories ({products.length})
@@ -236,10 +286,10 @@ export default function ProductsPageClient({
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.slug)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                     activeCategory === cat.slug
                       ? 'bg-[#B91C35] text-white shadow-md shadow-red-950/20'
-                      : 'bg-[#FFF9F0] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
+                      : 'bg-[#FAF7F2] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
                   }`}
                 >
                   <span>{cat.icon || '💥'}</span>
@@ -251,27 +301,27 @@ export default function ProductsPageClient({
           </div>
         </div>
 
-        {/* Count summary indicator */}
-        <div className="flex items-center justify-between text-xs text-[#647084] font-medium mb-6 px-1">
+        {/* Count Summary */}
+        <div className="flex items-center justify-between text-xs text-stone-500 font-medium mb-6 px-1">
           <span>
             Showing <strong className="text-[#10172A] font-extrabold">{filtered.length}</strong> firecracker products
           </span>
           {activeCategory !== 'all' && (
             <button
               onClick={() => setActiveCategory('all')}
-              className="text-[#B91C35] font-bold hover:underline"
+              className="text-[#B91C35] font-bold hover:underline cursor-pointer"
             >
               Clear category filter
             </button>
           )}
         </div>
 
-        {/* Products Display */}
+        {/* Products Grid / Table */}
         {filtered.length === 0 ? (
-          <div className="text-center py-24 bg-[#FFFFFF] rounded-2xl border border-[#EADBCA] max-w-md mx-auto shadow-sm">
+          <div className="text-center py-24 bg-white rounded-2xl border border-[#EADBCA] max-w-md mx-auto shadow-sm">
             <p className="text-5xl mb-3">🔍</p>
             <h3 className="text-lg font-black text-[#10172A]">No products found</h3>
-            <p className="text-sm text-[#647084] mt-1.5">
+            <p className="text-sm text-stone-500 mt-1.5">
               Try adjusting your search terms or choose &ldquo;All Categories&rdquo;.
             </p>
             <button
@@ -285,20 +335,18 @@ export default function ProductsPageClient({
             </button>
           </div>
         ) : viewMode === 'grid' ? (
-          /* Clean 4-Col Desktop, 3-Col Tablet, 2-Col Mobile Grid */
+          /* Responsive Product Grid: 2 cols mobile, 3 cols tablet, 4 cols desktop */
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-7 justify-center">
             {filtered.map((p) => {
               const discount = calcDiscount(p.mrp, p.offerPrice)
               const qty = getQty(p.id)
               const isJustAdded = addedId === p.id
-              const imageUrl =
-                p.images[0]?.url ||
-                'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&auto=format&fit=crop&q=80'
+              const imageUrl = resolveProductImage(p)
 
               return (
                 <div
                   key={p.id}
-                  className="group relative bg-[#FFFFFF] border border-[#EADBCA] hover:border-[#D6B36A] rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-black/5 flex flex-col justify-between"
+                  className="group relative bg-white border border-[#EADBCA] hover:border-[#D6B36A] rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 flex flex-col justify-between"
                 >
                   {/* Image Frame */}
                   <div className="relative aspect-square w-full overflow-hidden bg-[#F8F9FA]">
@@ -307,13 +355,13 @@ export default function ProductsPageClient({
                       alt={p.name}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      className="object-cover group-hover:scale-106 transition-transform duration-500"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
 
                     {/* Discount & Category Tags */}
                     <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none gap-1">
                       {discount > 0 ? (
-                        <span className="px-2.5 py-1 rounded-lg bg-[#B91C35] text-white text-[11px] font-black uppercase tracking-wider shadow-sm">
+                        <span className="px-2.5 py-1 rounded-lg bg-[#B91C35] text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider shadow-sm">
                           {discount}% OFF
                         </span>
                       ) : (
@@ -340,8 +388,8 @@ export default function ProductsPageClient({
                       <h3 className="font-extrabold text-[#10172A] text-xs sm:text-base leading-snug line-clamp-2 group-hover:text-[#B91C35] transition-colors mb-2 min-h-[2rem] sm:min-h-[2.5rem]">
                         {p.name}
                       </h3>
-                      <div className="inline-block px-2.5 py-0.5 rounded-md bg-[#FFF9F0] border border-[#EADBCA] text-[11px] text-[#647084] font-medium">
-                        Packing: <span className="text-[#10172A] font-bold">{p.unit}</span>
+                      <div className="inline-block px-2.5 py-0.5 rounded-md bg-[#FAF7F2] border border-[#EADBCA] text-[11px] text-stone-600 font-medium">
+                        Packing: <strong className="text-stone-900">{p.unit}</strong>
                       </div>
                     </div>
 
@@ -352,14 +400,14 @@ export default function ProductsPageClient({
                             {formatPrice(p.offerPrice)}
                           </span>
                           {p.mrp > p.offerPrice && (
-                            <span className="text-xs text-[#647084] line-through font-mono">
+                            <span className="text-xs text-stone-400 line-through font-mono">
                               {formatPrice(p.mrp)}
                             </span>
                           )}
                         </div>
 
                         {discount > 0 && (
-                          <span className="text-[11px] font-bold text-[#27AE60] bg-green-50 px-2 py-0.5 rounded-md border border-green-200">
+                          <span className="text-[10px] sm:text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
                             Save {formatPrice(Math.round(p.mrp - p.offerPrice))}
                           </span>
                         )}
@@ -367,20 +415,20 @@ export default function ProductsPageClient({
 
                       {/* Quantity or Add Button */}
                       {qty > 0 ? (
-                        <div className="flex items-center justify-between bg-[#FFF9F0] border border-[#EADBCA] rounded-xl p-1">
+                        <div className="flex items-center justify-between bg-[#FAF7F2] border border-[#EADBCA] rounded-xl p-1">
                           <button
                             onClick={() => updateQuantity(p.id, qty - 1)}
-                            className="w-8 h-8 rounded-lg bg-white border border-[#EADBCA] flex items-center justify-center text-[#10172A] hover:bg-[#B91C35] hover:text-white hover:border-[#B91C35] transition-colors font-bold text-sm"
+                            className="w-8 h-8 rounded-lg bg-white border border-[#EADBCA] flex items-center justify-center text-[#10172A] hover:bg-[#B91C35] hover:text-white hover:border-[#B91C35] transition-colors font-bold text-sm cursor-pointer"
                             aria-label="Decrease quantity"
                           >
                             <Minus className="w-3.5 h-3.5" />
                           </button>
-                          <span className="font-extrabold text-[#10172A] text-sm font-mono px-2">
+                          <span className="font-extrabold text-[#10172A] text-xs sm:text-sm font-mono px-2">
                             {qty} in Cart
                           </span>
                           <button
                             onClick={() => updateQuantity(p.id, qty + 1)}
-                            className="w-8 h-8 rounded-lg bg-white border border-[#EADBCA] flex items-center justify-center text-[#10172A] hover:bg-[#B91C35] hover:text-white hover:border-[#B91C35] transition-colors font-bold text-sm"
+                            className="w-8 h-8 rounded-lg bg-white border border-[#EADBCA] flex items-center justify-center text-[#10172A] hover:bg-[#B91C35] hover:text-white hover:border-[#B91C35] transition-colors font-bold text-sm cursor-pointer"
                             aria-label="Increase quantity"
                           >
                             <Plus className="w-3.5 h-3.5" />
@@ -390,10 +438,10 @@ export default function ProductsPageClient({
                         <button
                           onClick={() => handleAdd(p)}
                           disabled={!p.inStock}
-                          className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md ${
+                          className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm ${
                             isJustAdded
-                              ? 'bg-[#27AE60] text-white shadow-green-600/20'
-                              : 'bg-[#B91C35] hover:bg-[#9E152B] text-white shadow-red-950/20 hover:scale-[1.01] active:scale-[0.99]'
+                              ? 'bg-emerald-600 text-white'
+                              : 'bg-[#B91C35] hover:bg-[#9E152B] text-white hover:shadow-md'
                           } disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer`}
                         >
                           {isJustAdded ? (
@@ -415,10 +463,10 @@ export default function ProductsPageClient({
           </div>
         ) : (
           /* Table View */
-          <div className="bg-[#FFFFFF] border border-[#EADBCA] rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-white border border-[#EADBCA] rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#FFF9F0] border-b border-[#EADBCA] text-[#647084] text-xs font-black uppercase tracking-wider">
+                <thead className="bg-[#FAF7F2] border-b border-[#EADBCA] text-stone-500 text-xs font-black uppercase tracking-wider">
                   <tr>
                     <th className="py-4 px-5">Product Name</th>
                     <th className="py-4 px-5">Category</th>
@@ -433,18 +481,18 @@ export default function ProductsPageClient({
                     const qty = getQty(p.id)
                     const isJustAdded = addedId === p.id
                     return (
-                      <tr key={p.id} className="hover:bg-[#FFF9F0]/60 transition-colors">
+                      <tr key={p.id} className="hover:bg-[#FAF7F2]/60 transition-colors">
                         <td className="py-3.5 px-5">
                           <span className="font-extrabold text-[#10172A] block">{p.name}</span>
-                          {p.nameTa && <span className="text-xs text-[#647084]">{p.nameTa}</span>}
+                          {p.nameTa && <span className="text-xs text-stone-500">{p.nameTa}</span>}
                         </td>
                         <td className="py-3.5 px-5">
-                          <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#FFF9F0] border border-[#EADBCA] text-xs font-medium text-[#10172A]">
+                          <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#FAF7F2] border border-[#EADBCA] text-xs font-medium text-[#10172A]">
                             {p.category?.name}
                           </span>
                         </td>
-                        <td className="py-3.5 px-5 text-[#647084] text-xs font-medium">{p.unit}</td>
-                        <td className="py-3.5 px-5 text-[#647084] line-through font-mono text-xs">
+                        <td className="py-3.5 px-5 text-stone-500 text-xs font-medium">{p.unit}</td>
+                        <td className="py-3.5 px-5 text-stone-400 line-through font-mono text-xs">
                           {formatPrice(p.mrp)}
                         </td>
                         <td className="py-3.5 px-5 font-mono font-black text-base text-[#10172A]">
@@ -452,32 +500,16 @@ export default function ProductsPageClient({
                         </td>
                         <td className="py-3.5 px-5 text-center">
                           {qty > 0 ? (
-                            <div className="inline-flex items-center gap-2 bg-[#FFF9F0] border border-[#EADBCA] rounded-xl p-1">
-                              <button
-                                onClick={() => updateQuantity(p.id, qty - 1)}
-                                className="w-7 h-7 rounded-lg bg-white border border-[#EADBCA] flex items-center justify-center text-xs font-bold"
-                              >
-                                -
-                              </button>
-                              <span className="font-mono font-bold text-xs px-1">{qty}</span>
-                              <button
-                                onClick={() => updateQuantity(p.id, qty + 1)}
-                                className="w-7 h-7 rounded-lg bg-white border border-[#EADBCA] flex items-center justify-center text-xs font-bold"
-                              >
-                                +
-                              </button>
-                            </div>
+                            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                              {qty} in Cart
+                            </span>
                           ) : (
                             <button
                               onClick={() => handleAdd(p)}
                               disabled={!p.inStock}
-                              className={`px-4 py-2 rounded-xl text-xs font-extrabold ${
-                                isJustAdded
-                                  ? 'bg-[#27AE60] text-white'
-                                  : 'bg-[#B91C35] hover:bg-[#9E152B] text-white'
-                              } transition-colors`}
+                              className="px-4 py-1.5 bg-[#B91C35] hover:bg-[#9E152B] text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer"
                             >
-                              {isJustAdded ? 'Added' : 'Add to Order'}
+                              Add
                             </button>
                           )}
                         </td>
@@ -489,7 +521,7 @@ export default function ProductsPageClient({
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   )
 }
