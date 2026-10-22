@@ -1,7 +1,11 @@
+import { connection } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { FolderTree, Plus, Sparkles } from 'lucide-react'
 
 export default async function AdminCategoriesPage() {
+  // Query live data only when handling a request, never during prerendering.
+  await connection()
+
   const categories = await prisma.category.findMany({
     orderBy: { sortOrder: 'asc' },
     include: {

@@ -1,3 +1,4 @@
+import { connection } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
@@ -17,6 +18,9 @@ export default async function AdminOrdersPage({
 }: {
   searchParams: Promise<{ status?: string; q?: string; page?: string }>
 }) {
+  // Query live data only when handling a request, never during prerendering.
+  await connection()
+
   const params = await searchParams
   const page = Number(params.page) || 1
   const pageSize = 20

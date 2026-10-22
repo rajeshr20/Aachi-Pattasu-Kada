@@ -1,3 +1,4 @@
+import { connection } from 'next/server'
 import { getSettings } from '@/lib/settings'
 import { prisma } from '@/lib/prisma'
 import Header from '@/components/Header'
@@ -11,9 +12,10 @@ import MapSection from '@/components/home/MapSection'
 import FAQSection from '@/components/home/FAQSection'
 import WhatsAppFab from '@/components/WhatsAppFab'
 
-export const revalidate = 60
-
 export default async function HomePage() {
+  // Query live data only when handling a request, never during prerendering.
+  await connection()
+
   const [settings, categories, featuredProducts, newArrivals] = await Promise.all([
     getSettings(),
     prisma.category.findMany({

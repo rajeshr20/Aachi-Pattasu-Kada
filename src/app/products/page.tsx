@@ -1,3 +1,4 @@
+import { connection } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSettings } from '@/lib/settings'
 import Header from '@/components/Header'
@@ -5,8 +6,6 @@ import Footer from '@/components/Footer'
 import ProductsPageClient from '@/components/products/ProductsPageClient'
 import WhatsAppFab from '@/components/WhatsAppFab'
 import type { Metadata } from 'next'
-
-export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Shop Firecrackers',
@@ -18,6 +17,9 @@ export default async function ProductsPage({
 }: {
   searchParams: Promise<{ category?: string; q?: string }>
 }) {
+  // Query live data only when handling a request, never during prerendering.
+  await connection()
+
   const params = await searchParams
   const [settings, categories, products] = await Promise.all([
     getSettings(),
