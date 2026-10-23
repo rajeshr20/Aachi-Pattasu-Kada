@@ -16,7 +16,7 @@ export default function OurStory({ settings = {} }: OurStoryProps) {
       : settings.shop_name || 'Aachi Pattasu Kadai'
 
   return (
-    <section className="relative overflow-hidden py-20 sm:py-28 bg-gradient-to-br from-[#06222f] via-[#082e3f] to-[#0b3a52] text-white">
+    <section className="relative overflow-hidden py-24 sm:py-32 bg-gradient-to-br from-[#06222f] via-[#082e3f] to-[#0b3a52] text-white border-b border-[#0B6E99]/30">
       {/* Background radial glow */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#FFB300]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#0B6E99]/15 rounded-full blur-3xl pointer-events-none" />
@@ -26,11 +26,11 @@ export default function OurStory({ settings = {} }: OurStoryProps) {
           
           {/* Left Column: Story text and stats */}
           <div className="lg:col-span-7">
-            <span className="inline-block text-[#FFB300] text-xs font-black uppercase tracking-widest mb-3">
+            <span className="inline-block text-[#FFB300] text-xs font-black uppercase tracking-widest mb-4">
               {locale === 'ta' ? 'சிவகாசி முதல் பெருமாநல்லூர் வரை' : 'FROM SIVAKASI TO PERUMANALLUR'}
             </span>
 
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.15] mb-6">
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.2] mb-8">
               {locale === 'ta' ? (
                 <>
                   பாரம்பரிய தயாரிப்பு, <span className="text-[#FFB300]">பாதுகாப்பு & கொண்டாட்டம்</span>
@@ -42,7 +42,7 @@ export default function OurStory({ settings = {} }: OurStoryProps) {
               )}
             </h2>
 
-            <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
+            <div className="space-y-6 text-slate-300 text-sm sm:text-base leading-relaxed sm:leading-loose mb-10">
               <p>
                 {locale === 'ta'
                   ? 'பெருமாநல்லூர் ஆச்சிமெஸ் எதிரில் அமைந்துள்ள ஆச்சி பட்டாசு கடை, சிவகாசியின் முன்னணி தயாரிப்பாளர்களிடமிருந்து நேரடியாக தரமான பசுமைப் பட்டாசுகளை உங்கள் இல்லங்களுக்கு வழங்குகிறது.'
@@ -56,22 +56,22 @@ export default function OurStory({ settings = {} }: OurStoryProps) {
             </div>
 
             {/* Founded & Trust Badges */}
-            <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/15">
+            <div className="grid grid-cols-3 gap-6 pt-8 mt-10 border-t border-white/20">
               <div>
                 <span className="block text-2xl sm:text-3xl font-black text-[#FFB300]">100%</span>
-                <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-1 block">
+                <span className="text-xs text-slate-300 font-semibold uppercase tracking-wider mt-1.5 block">
                   {locale === 'ta' ? 'PESO சான்றளிப்பு' : 'PESO Certified'}
                 </span>
               </div>
               <div>
                 <span className="block text-2xl sm:text-3xl font-black text-[#FFB300]">2026</span>
-                <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-1 block">
+                <span className="text-xs text-slate-300 font-semibold uppercase tracking-wider mt-1.5 block">
                   {locale === 'ta' ? 'புதிய சீசன் சரக்கு' : 'Fresh Season Stock'}
                 </span>
               </div>
               <div>
                 <span className="block text-2xl sm:text-3xl font-black text-[#FFB300]">DIRECT</span>
-                <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-1 block">
+                <span className="text-xs text-slate-300 font-semibold uppercase tracking-wider mt-1.5 block">
                   {locale === 'ta' ? 'தொழிற்சாலை விலை' : 'Factory Rates'}
                 </span>
               </div>
@@ -97,7 +97,7 @@ export default function OurStory({ settings = {} }: OurStoryProps) {
                 <span className="font-extrabold text-[#FFB300] text-sm block">
                   {shopName}
                 </span>
-                <span className="text-xs text-slate-400 font-medium">
+                <span className="text-xs text-slate-400 font-medium mt-0.5 block">
                   {locale === 'ta' ? 'ஆச்சிமெஸ் எதிரில், பெருமாநல்லூர்' : 'Opposite Aachi Mess, Perumanallur'}
                 </span>
               </div>

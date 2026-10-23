@@ -53,90 +53,108 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Store Settings</h1>
-        <p className="text-gray-400 text-sm">Configure shop identity, contact numbers, and legal disclaimers</p>
+    <div className="max-w-4xl mx-auto space-y-8 pt-12 lg:pt-0 pb-16">
+      {/* Page Header */}
+      <div className="space-y-1.5 pb-6 border-b border-white/10">
+        <span className="text-xs uppercase tracking-widest text-[#D6B36A] font-bold">
+          System & Store Configuration
+        </span>
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+          Store Settings
+        </h1>
+        <p className="text-slate-300 text-sm leading-relaxed max-w-2xl">
+          Configure shop branding, direct WhatsApp lines, opening hours, delivery notices, and checkout minimum order thresholds.
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         {saved && (
-          <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm">
-            <CheckCircle className="w-4 h-4 shrink-0" />
-            <span>Settings updated successfully!</span>
+          <div className="flex items-center gap-3 p-4 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-emerald-300 text-sm font-semibold shadow-sm">
+            <CheckCircle className="w-5 h-5 shrink-0 text-emerald-400" />
+            <span>Settings updated and saved successfully!</span>
           </div>
         )}
 
         {error && (
-          <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
-            <AlertCircle className="w-4 h-4 shrink-0" />
+          <div className="flex items-center gap-3 p-4 bg-red-500/15 border border-red-500/30 rounded-2xl text-red-300 text-sm font-semibold shadow-sm">
+            <AlertCircle className="w-5 h-5 shrink-0 text-red-400" />
             <span>{error}</span>
           </div>
         )}
 
         {/* Basic Shop Info */}
-        <div className="bg-[#121626] border border-white/10 rounded-2xl p-6 space-y-4">
-          <h2 className="text-base font-bold text-[#F5A623] uppercase tracking-wider text-xs">
-            Shop Information
-          </h2>
+        <div className="bg-[#121626] border border-white/10 rounded-3xl p-6 sm:p-8 space-y-5 shadow-xl">
+          <div className="pb-3 border-b border-white/10">
+            <h2 className="text-xs font-bold text-[#D6B36A] uppercase tracking-wider">
+              Store Identity & Branding
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Name and tagline displayed across customer storefront and PDF invoices.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">Shop Name</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-300">Shop Name (English)</label>
               <input
                 type="text"
                 value={settings.shop_name || ''}
                 onChange={e => handleChange('shop_name', e.target.value)}
-                className="w-full px-4 py-2 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm"
+                className="w-full px-4 py-3 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-[#D6B36A] transition-all"
               />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">Shop Name (Alternate / Brand)</label>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-300">Shop Name (Tamil / Brand)</label>
               <input
                 type="text"
                 value={settings.shop_name_ta || ''}
                 onChange={e => handleChange('shop_name_ta', e.target.value)}
-                className="w-full px-4 py-2 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm"
+                className="w-full px-4 py-3 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-[#D6B36A] transition-all"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">Tagline</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-300">Primary Tagline</label>
               <input
                 type="text"
                 value={settings.tagline || ''}
                 onChange={e => handleChange('tagline', e.target.value)}
-                className="w-full px-4 py-2 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm"
+                className="w-full px-4 py-3 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-[#D6B36A] transition-all"
               />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">Secondary Tagline / Subtitle</label>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-300">Secondary Tagline / Subtitle</label>
               <input
                 type="text"
                 value={settings.tagline_ta || ''}
                 onChange={e => handleChange('tagline_ta', e.target.value)}
-                className="w-full px-4 py-2 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm"
+                className="w-full px-4 py-3 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-[#D6B36A] transition-all"
               />
             </div>
           </div>
         </div>
 
         {/* Contact Numbers */}
-        <div className="bg-[#121626] border border-white/10 rounded-2xl p-6 space-y-4">
-          <h2 className="text-base font-bold text-[#F5A623] uppercase tracking-wider text-xs">
-            Phone & WhatsApp Numbers
-          </h2>
+        <div className="bg-[#121626] border border-white/10 rounded-3xl p-6 sm:p-8 space-y-5 shadow-xl">
+          <div className="pb-3 border-b border-white/10">
+            <h2 className="text-xs font-bold text-[#D6B36A] uppercase tracking-wider">
+              Phone & WhatsApp Hotlines
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Direct numbers for customer enquiry calls and WhatsApp order confirmations.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">Primary Phone</label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-300">Primary Phone</label>
               <input
                 type="text"
                 value={settings.phone1 || ''}
                 onChange={e => handleChange('phone1', e.target.value)}
-                className="w-full px-4 py-2 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm font-mono"
+                className="w-full px-4 py-3 bg-[#0B0D1A] border border-white/10 rounded-xl text-white text-sm font-mono focus:outline-none focus:border-[#D6B36A] transition-all"
               />
             </div>
             <div>

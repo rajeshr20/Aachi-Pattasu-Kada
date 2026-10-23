@@ -77,43 +77,52 @@ export default async function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-8 pt-12 lg:pt-0">
-      {/* Page Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
-        <div>
-          <span className="text-xs uppercase tracking-widest text-[#D6B36A] font-bold">Executive Control</span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">Store Dashboard</h1>
-          <p className="text-slate-400 text-sm mt-0.5">Overview of customer cracker enquiries, stock levels, and store performance</p>
+    <div className="space-y-10 pt-12 lg:pt-0">
+      {/* Page Title & Sentence Clearance */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-white/10">
+        <div className="space-y-1.5">
+          <span className="text-xs uppercase tracking-widest text-[#D6B36A] font-bold">
+            Executive Control & Analytics
+          </span>
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Store Dashboard
+          </h1>
+          <p className="text-slate-300 text-sm leading-relaxed max-w-xl">
+            Real-time overview of customer cracker enquiries, active stock inventory levels, and festive sales performance.
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3.5 shrink-0">
           <Link
             href="/admin/products/new"
-            className="px-4 py-2.5 bg-[#B91C35] hover:bg-[#991429] text-white font-bold text-xs rounded-xl shadow-lg transition-all"
+            className="px-5 py-3 bg-[#B91C35] hover:bg-[#991429] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition-all"
           >
             + Add New Cracker
           </Link>
           <Link
             href="/products"
             target="_blank"
-            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs rounded-xl border border-white/10 transition-all"
+            className="px-5 py-3 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs sm:text-sm rounded-xl border border-white/10 transition-all flex items-center gap-2"
           >
-            View Live Store ↗
+            <span>View Live Store</span>
+            <span>↗</span>
           </Link>
         </div>
       </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Stats grid with generous card padding and gaps */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {stats.map(stat => (
-          <div key={stat.label} className="bg-[#121626] border border-white/10 rounded-2xl p-5 hover:border-[#D6B36A]/40 transition-all">
-            <div className="flex items-start justify-between mb-3">
-              <div className={`w-11 h-11 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                <stat.icon className={`w-5 h-5 ${stat.color}`} />
+          <div key={stat.label} className="bg-[#121626] border border-white/10 rounded-3xl p-6 sm:p-7 hover:border-[#D6B36A]/50 transition-all shadow-lg flex flex-col justify-between">
+            <div className="flex items-start justify-between mb-4">
+              <div className={`w-12 h-12 ${stat.bg} rounded-2xl flex items-center justify-center shadow-inner`}>
+                <stat.icon className={`w-6 h-6 ${stat.color}`} />
               </div>
             </div>
-            <p className="text-2xl sm:text-3xl font-extrabold text-white font-mono">{stat.value}</p>
-            <p className="text-slate-400 text-xs sm:text-sm mt-1">{stat.label}</p>
+            <div className="space-y-1.5">
+              <p className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight">{stat.value}</p>
+              <p className="text-slate-400 text-xs sm:text-sm font-medium leading-normal">{stat.label}</p>
+            </div>
           </div>
         ))}
       </div>

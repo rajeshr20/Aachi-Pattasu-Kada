@@ -195,22 +195,23 @@ export default function ProductsPageClient({
       {/* Main Content Area */}
       <main className="site-container pt-8 sm:pt-12">
         {/* Search, Sort & View Controls */}
-        <div className="bg-white border border-[#EADBCA] rounded-2xl p-4 sm:p-6 mb-8 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-3.5 items-center">
+        <div className="bg-white border border-[#EADBCA] rounded-3xl p-5 sm:p-8 mb-8 shadow-sm">
+          <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
             {/* Search Input */}
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+              <Search className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
               <input
                 type="text"
-                placeholder="Search crackers (e.g. Bijili, Chakkar, Flower Pot, Rocket, Sparklers)..."
+                placeholder="Search crackers (e.g. Bijili, Chakkar, Flower Pot, Rocket, Sparklers, Gift Box)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-10 py-3 bg-[#FAF7F2] border border-[#EADBCA] rounded-xl text-[#10172A] placeholder-stone-400 text-sm focus:outline-none focus:border-[#B91C35] focus:bg-white transition-all"
+                className="w-full pl-12 sm:pl-14 pr-12 py-3.5 sm:py-4 bg-[#FAF7F2] border border-[#EADBCA] rounded-2xl text-[#10172A] placeholder-stone-400 text-sm sm:text-base focus:outline-none focus:border-[#B91C35] focus:bg-white transition-all shadow-inner"
               />
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-black p-1"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-[#10172A] p-1.5 rounded-full hover:bg-stone-200 transition-colors"
+                  title="Clear search"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -218,11 +219,11 @@ export default function ProductsPageClient({
             </div>
 
             {/* Sort & In-Stock Controls */}
-            <div className="flex items-center gap-2.5 w-full md:w-auto justify-between md:justify-end">
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full lg:w-auto justify-between lg:justify-end">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3.5 py-3 bg-[#FAF7F2] border border-[#EADBCA] rounded-xl text-[#10172A] text-xs font-bold focus:outline-none focus:border-[#B91C35] cursor-pointer"
+                className="px-4 py-3.5 bg-[#FAF7F2] border border-[#EADBCA] rounded-2xl text-[#10172A] text-xs sm:text-sm font-bold focus:outline-none focus:border-[#B91C35] cursor-pointer"
               >
                 <option value="default">Sort: Recommended</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -230,21 +231,21 @@ export default function ProductsPageClient({
                 <option value="discount">Highest Discount</option>
               </select>
 
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#10172A] bg-[#FAF7F2] px-3.5 py-3 rounded-xl border border-[#EADBCA] whitespace-nowrap">
+              <label className="flex items-center gap-2.5 cursor-pointer text-xs sm:text-sm font-bold text-[#10172A] bg-[#FAF7F2] px-4 py-3.5 rounded-2xl border border-[#EADBCA] whitespace-nowrap">
                 <input
                   type="checkbox"
                   checked={inStockOnly}
                   onChange={(e) => setInStockOnly(e.target.checked)}
-                  className="w-4 h-4 accent-[#B91C35]"
+                  className="w-4 h-4 accent-[#B91C35] rounded cursor-pointer"
                 />
                 In Stock Only
               </label>
 
               {/* View Toggle */}
-              <div className="flex items-center bg-[#FAF7F2] border border-[#EADBCA] rounded-xl p-1">
+              <div className="flex items-center bg-[#FAF7F2] border border-[#EADBCA] rounded-2xl p-1 shrink-0">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-all ${
+                  className={`p-2.5 rounded-xl transition-all ${
                     viewMode === 'grid'
                       ? 'bg-[#B91C35] text-white shadow-xs'
                       : 'text-stone-500 hover:text-[#10172A]'
@@ -255,7 +256,7 @@ export default function ProductsPageClient({
                 </button>
                 <button
                   onClick={() => setViewMode('table')}
-                  className={`p-2 rounded-lg transition-all ${
+                  className={`p-2.5 rounded-xl transition-all ${
                     viewMode === 'table'
                       ? 'bg-[#B91C35] text-white shadow-xs'
                       : 'text-stone-500 hover:text-[#10172A]'
@@ -269,10 +270,10 @@ export default function ProductsPageClient({
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-[#EADBCA]/60">
+          <div className="flex flex-wrap items-center gap-2.5 mt-5 pt-5 border-t border-[#EADBCA]/70">
             <button
               onClick={() => setActiveCategory('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 activeCategory === 'all'
                   ? 'bg-[#B91C35] text-white shadow-md shadow-red-950/20'
                   : 'bg-[#FAF7F2] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
@@ -286,7 +287,7 @@ export default function ProductsPageClient({
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.slug)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
                     activeCategory === cat.slug
                       ? 'bg-[#B91C35] text-white shadow-md shadow-red-950/20'
                       : 'bg-[#FAF7F2] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
@@ -294,24 +295,24 @@ export default function ProductsPageClient({
                 >
                   <span>{cat.icon || '💥'}</span>
                   <span>{cat.name}</span>
-                  <span className="text-[10px] opacity-75 font-mono">({count})</span>
+                  <span className="text-[11px] opacity-75 font-mono">({count})</span>
                 </button>
               )
             })}
           </div>
         </div>
 
-        {/* Count Summary */}
-        <div className="flex items-center justify-between text-xs text-stone-500 font-medium mb-6 px-1">
-          <span>
-            Showing <strong className="text-[#10172A] font-extrabold">{filtered.length}</strong> firecracker products
-          </span>
+        {/* Count Summary & Sentence Spacing */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm text-stone-600 font-medium mb-8 px-1">
+          <p className="leading-relaxed">
+            Showing <strong className="text-[#10172A] font-extrabold">{filtered.length}</strong> firecracker varieties available for booking enquiry.
+          </p>
           {activeCategory !== 'all' && (
             <button
               onClick={() => setActiveCategory('all')}
-              className="text-[#B91C35] font-bold hover:underline cursor-pointer"
+              className="text-[#B91C35] font-bold hover:underline cursor-pointer self-start sm:self-auto"
             >
-              Clear category filter
+              Clear category filter ({activeCategory})
             </button>
           )}
         </div>
@@ -384,12 +385,19 @@ export default function ProductsPageClient({
 
                   {/* Details */}
                   <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between text-left">
-                    <div className="mb-3">
-                      <h3 className="font-extrabold text-[#10172A] text-xs sm:text-base leading-snug line-clamp-2 group-hover:text-[#B91C35] transition-colors mb-2 min-h-[2rem] sm:min-h-[2.5rem]">
+                    <div className="mb-3.5 space-y-1.5">
+                      <h3 className="font-extrabold text-[#10172A] text-xs sm:text-base leading-snug line-clamp-2 group-hover:text-[#B91C35] transition-colors min-h-[2rem] sm:min-h-[2.5rem]">
                         {p.name}
                       </h3>
-                      <div className="inline-block px-2.5 py-0.5 rounded-md bg-[#FAF7F2] border border-[#EADBCA] text-[11px] text-stone-600 font-medium">
-                        Packing: <strong className="text-stone-900">{p.unit}</strong>
+                      {p.nameTa && (
+                        <p className="text-[11px] sm:text-xs text-amber-800/90 font-medium line-clamp-1">
+                          {p.nameTa}
+                        </p>
+                      )}
+                      <div className="pt-1">
+                        <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#FAF7F2] border border-[#EADBCA] text-[11px] text-stone-600 font-medium">
+                          Packing: <strong className="text-stone-900">{p.unit}</strong>
+                        </span>
                       </div>
                     </div>
 

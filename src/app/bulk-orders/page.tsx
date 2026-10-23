@@ -12,8 +12,10 @@ export const metadata: Metadata = {
 
 export default async function BulkOrdersPage() {
   const settings = await getSettings()
-  const phone = settings.phone1 || '9500565391'
-  const whatsapp = settings.whatsapp || '919500565391'
+  const rawPhone = settings.phone1 || '9500565391'
+  const cleanPhone = rawPhone.replace(/\D/g, '').slice(-10) || '9500565391'
+  const displayPhone = `+91 ${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5)}`
+  const whatsappNumber = settings.whatsapp || `91${cleanPhone}`
 
   return (
     <main className="min-h-screen bg-[#FAF8F4] flex flex-col">
@@ -31,27 +33,27 @@ export default async function BulkOrdersPage() {
             Bulk & Wedding <span className="text-[#FFB300]">Orders</span>
           </h1>
 
-          <p className="text-slate-300 text-sm sm:text-lg leading-relaxed mb-8">
+          <p className="text-slate-300 text-sm sm:text-lg leading-relaxed sm:leading-loose mb-10 max-w-2xl mx-auto">
             Planning a grand wedding sangeet, temple festival, apartment community event, or corporate festival gifting? Get direct-from-factory wholesale rates with GST compliance and doorstep delivery.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href={`https://wa.me/${whatsapp}?text=${encodeURIComponent('Hi Aachi Pattasu Kadai, I would like to get a custom bulk/wedding quotation.')}`}
+              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hi Aachi Pattasu Kadai, I would like to get a custom bulk/wedding quotation.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-amber text-base w-full sm:w-auto"
+              className="btn-amber text-base w-full sm:w-auto shadow-lg"
             >
               <MessageSquare className="w-5 h-5 text-slate-900" />
-              <span>Request Quote on WhatsApp</span>
+              <span>WhatsApp Us ({displayPhone})</span>
             </a>
 
             <a
-              href={`tel:+91${phone}`}
+              href={`tel:+91${cleanPhone}`}
               className="btn-outline-white text-base w-full sm:w-auto"
             >
               <Phone className="w-5 h-5 text-[#FFB300]" />
-              <span>Call Team: {phone}</span>
+              <span>Call Team ({displayPhone})</span>
             </a>
           </div>
         </div>
