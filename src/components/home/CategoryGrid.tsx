@@ -2,21 +2,12 @@
 
 import { useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { getCategoryImageUrl } from '@/lib/catalogData'
 import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Zap,
-  Flame,
-  Rocket,
-  Gift,
-  Disc,
-  Flower2,
-  Boxes,
-  Waves,
-  Star,
-  PartyPopper,
-  ShieldAlert,
 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -26,41 +17,11 @@ interface Category {
   nameTa?: string
   slug: string
   icon?: string | null
+  image?: string | null
 }
 
 interface CategoryGridProps {
   categories: Category[]
-}
-
-const getCategoryVectorIcon = (slug: string) => {
-  if (slug.includes('sound') || slug.includes('chorsa') || slug.includes('garland')) {
-    return <Flame className="w-7 h-7 text-[#FFB300]" />
-  }
-  if (slug.includes('bijili')) {
-    return <Zap className="w-7 h-7 text-[#FACC15]" />
-  }
-  if (slug.includes('chakkar') || slug.includes('wheel')) {
-    return <Disc className="w-7 h-7 text-[#38BDF8]" />
-  }
-  if (slug.includes('pot') || slug.includes('fountain')) {
-    return <Flower2 className="w-7 h-7 text-[#FB7185]" />
-  }
-  if (slug.includes('sparkler')) {
-    return <Sparkles className="w-7 h-7 text-[#FDE047]" />
-  }
-  if (slug.includes('rocket')) {
-    return <Rocket className="w-7 h-7 text-[#F97316]" />
-  }
-  if (slug.includes('aerial') || slug.includes('shot')) {
-    return <PartyPopper className="w-7 h-7 text-[#C084FC]" />
-  }
-  if (slug.includes('gift')) {
-    return <Gift className="w-7 h-7 text-[#34D399]" />
-  }
-  if (slug.includes('fancy') || slug.includes('kid')) {
-    return <Star className="w-7 h-7 text-[#FBBF24]" />
-  }
-  return <Sparkles className="w-7 h-7 text-[#FFB300]" />
 }
 
 export default function CategoryGrid({ categories }: CategoryGridProps) {
@@ -136,7 +97,7 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
               <Link
                 key={cat.id}
                 href={`/catalogue?category=${cat.slug}`}
-                className="group shrink-0 w-48 sm:w-56 h-48 sm:h-56 rounded-3xl p-5 sm:p-6 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-1.5 shadow-md shadow-orange-950/10 hover:shadow-xl hover:shadow-orange-600/25 relative overflow-hidden"
+                className="group shrink-0 w-48 sm:w-56 h-56 sm:h-64 rounded-3xl p-4 sm:p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-1.5 shadow-md shadow-orange-950/10 hover:shadow-xl hover:shadow-orange-600/25 relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(135deg, #FF6F00 0%, #F55100 50%, #D83A00 100%)',
                   scrollSnapAlign: 'start',
@@ -145,9 +106,16 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
                 {/* Subtle festive background pattern / radial glow */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.25),transparent_70%)] pointer-events-none" />
 
-                {/* Central illuminated glyph box */}
-                <div className="relative mt-1 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-black/30 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-inner group-hover:scale-110 group-hover:bg-black/40 transition-all duration-300">
-                  {getCategoryVectorIcon(cat.slug)}
+                {/* Central illuminated cracker product image */}
+                <div className="relative mt-2 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-white/40 shadow-xl group-hover:scale-110 group-hover:shadow-2xl transition-all duration-300 bg-black/20">
+                  <Image
+                    src={getCategoryImageUrl(cat)}
+                    alt={cat.name}
+                    fill
+                    sizes="(max-width: 640px) 80px, 96px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
                 </div>
 
                 {/* Category Title in Bold ALL-CAPS */}

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { formatPrice, calcDiscount } from '@/lib/utils'
+import { getCategoryImageUrl } from '@/lib/catalogData'
 
 interface Product {
   id: string
@@ -39,6 +40,7 @@ interface Category {
   nameTa?: string
   slug: string
   icon?: string | null
+  image?: string | null
 }
 
 interface Props {
@@ -273,27 +275,40 @@ export default function ProductsPageClient({
           <div className="flex flex-wrap items-center gap-2.5 mt-5 pt-5 border-t border-[#EADBCA]/70">
             <button
               onClick={() => setActiveCategory('all')}
-              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 activeCategory === 'all'
                   ? 'bg-[#B91C35] text-white shadow-md shadow-red-950/20'
                   : 'bg-[#FAF7F2] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
               }`}
             >
-              All Categories ({products.length})
+              <span className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-600 flex items-center justify-center text-xs font-bold shrink-0">
+                ✨
+              </span>
+              <span>All Categories</span>
+              <span className="text-[11px] opacity-75 font-mono">({products.length})</span>
             </button>
             {categories.map((cat) => {
               const count = products.filter((p) => p.category?.slug === cat.slug).length
+              const imgUrl = getCategoryImageUrl(cat)
               return (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.slug)}
-                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
                     activeCategory === cat.slug
                       ? 'bg-[#B91C35] text-white shadow-md shadow-red-950/20'
                       : 'bg-[#FAF7F2] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
                   }`}
                 >
-                  <span>{cat.icon || '💥'}</span>
+                  <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-lg overflow-hidden shrink-0 border border-black/10 shadow-xs bg-stone-200">
+                    <Image
+                      src={imgUrl}
+                      alt={cat.name}
+                      width={28}
+                      height={28}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <span>{cat.name}</span>
                   <span className="text-[11px] opacity-75 font-mono">({count})</span>
                 </button>

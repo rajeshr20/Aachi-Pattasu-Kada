@@ -115,6 +115,26 @@ export const DEFAULT_CATEGORIES: CatalogCategory[] = [
   },
 ]
 
+export function getCategoryImageUrl(cat?: { slug?: string | null; name?: string | null; image?: string | null }): string {
+  if (cat?.image && typeof cat.image === 'string' && cat.image.trim().length > 0) {
+    return cat.image
+  }
+  const s = `${cat?.slug || ''} ${cat?.name || ''}`.toLowerCase()
+  if (s.includes('chakkar') || s.includes('wheel')) return '/images/products/zamin-chakkars.jpg'
+  if (s.includes('pot') || s.includes('flower')) return '/images/products/deluxe-flower-pots.jpg'
+  if (s.includes('fountain') || s.includes('dice')) return '/images/products/dice-fountain.jpg'
+  if (s.includes('peacock')) return '/images/products/peacock-fountain-box.jpg'
+  if (s.includes('sparkler') || s.includes('twinkl') || s.includes('shower')) return '/images/products/electric-sparklers.jpg'
+  if (s.includes('rocket')) return '/images/products/sky-rockets.jpg'
+  if (s.includes('aerial') || s.includes('shot') || s.includes('repeater') || s.includes('cake') || s.includes('set-out')) return '/images/products/aerial-mega-cake.jpg'
+  if (s.includes('gift') || s.includes('box')) return '/images/products/diwali-gift-box.jpg'
+  if (s.includes('fancy') || s.includes('kid') || s.includes('novelty') || s.includes('match')) return '/images/products/kids-fancy-pack.jpg'
+  if (s.includes('chorsa') || s.includes('bomb') || s.includes('hydro')) return '/images/products/chorsa-cracker-pack.jpg'
+  if (s.includes('garland') || s.includes('ladi')) return '/images/products/ladi-sound-garland.jpg'
+  if (s.includes('bijili') || s.includes('sound')) return '/images/products/red-bijili.jpg'
+  return '/images/products/deluxe-flower-pots.jpg'
+}
+
 export const DEFAULT_PRODUCTS: CatalogProduct[] = [
   // Sound Crackers
   {

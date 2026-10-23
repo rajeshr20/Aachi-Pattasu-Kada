@@ -1,8 +1,9 @@
 import { prisma } from '@/lib/prisma'
+import Image from 'next/image'
 import { ShoppingBag, Package, TrendingUp, Clock, CheckCircle, IndianRupee, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
-import { DEFAULT_PRODUCTS, DEFAULT_CATEGORIES } from '@/lib/catalogData'
+import { DEFAULT_PRODUCTS, DEFAULT_CATEGORIES, getCategoryImageUrl } from '@/lib/catalogData'
 
 export default async function AdminDashboard() {
   const today = new Date()
@@ -198,7 +199,15 @@ export default async function AdminDashboard() {
               {DEFAULT_CATEGORIES.slice(0, 5).map(cat => (
                 <div key={cat.id} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-xs">
                   <div className="flex items-center gap-2 text-white font-medium">
-                    <span>{cat.icon}</span>
+                    <div className="relative w-5 h-5 rounded overflow-hidden shrink-0 border border-white/20 bg-black/40">
+                      <Image
+                        src={getCategoryImageUrl(cat)}
+                        alt={cat.name}
+                        fill
+                        sizes="20px"
+                        className="object-cover"
+                      />
+                    </div>
                     <span>{cat.name}</span>
                   </div>
                   <span className="text-[11px] text-[#D6B36A] font-bold">

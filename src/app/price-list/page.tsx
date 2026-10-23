@@ -3,9 +3,11 @@
 import { useState, useEffect, useMemo } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import Image from 'next/image'
 import { Search, Printer, ShoppingCart, Plus, Check } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { formatPrice, calcDiscount } from '@/lib/utils'
+import { getCategoryImageUrl } from '@/lib/catalogData'
 
 interface ProductItem {
   id: string
@@ -128,25 +130,37 @@ export default function PriceListPage() {
             <div className="flex flex-wrap items-center justify-center gap-2 pt-3 border-t border-[#EADBCA]/60">
               <button
                 onClick={() => setSelectedCategory('ALL')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                   selectedCategory === 'ALL'
                     ? 'bg-[#B91C35] text-white shadow-md'
                     : 'bg-[#FFF9F0] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
                 }`}
               >
-                All Categories ({products.length})
+                <span className="w-5 h-5 rounded-md bg-amber-500/20 text-amber-600 flex items-center justify-center text-[10px] font-bold shrink-0">
+                  ✨
+                </span>
+                <span>All Categories ({products.length})</span>
               </button>
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                     selectedCategory === cat
                       ? 'bg-[#B91C35] text-white shadow-md'
                       : 'bg-[#FFF9F0] text-[#10172A] hover:bg-[#F3ECE1] border border-[#EADBCA]'
                   }`}
                 >
-                  {cat}
+                  <div className="relative w-5 h-5 rounded-md overflow-hidden shrink-0 border border-black/10 bg-stone-200">
+                    <Image
+                      src={getCategoryImageUrl({ name: cat })}
+                      alt={cat}
+                      width={20}
+                      height={20}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span>{cat}</span>
                 </button>
               ))}
             </div>
