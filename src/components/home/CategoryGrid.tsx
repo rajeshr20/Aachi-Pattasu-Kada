@@ -97,33 +97,27 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
               <Link
                 key={cat.id}
                 href={`/catalogue?category=${cat.slug}`}
-                className="group shrink-0 w-48 sm:w-56 h-56 sm:h-64 rounded-3xl p-4 sm:p-5 flex flex-col items-center justify-between text-center transition-all duration-300 hover:-translate-y-1.5 shadow-md shadow-orange-950/10 hover:shadow-xl hover:shadow-orange-600/25 relative overflow-hidden"
-                style={{
-                  background: 'linear-gradient(135deg, #FF6F00 0%, #F55100 50%, #D83A00 100%)',
-                  scrollSnapAlign: 'start',
-                }}
+                className="group shrink-0 w-44 sm:w-52 rounded-2xl bg-white border border-[#EAE5DC] overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 shadow-xs hover:shadow-xl hover:border-[#FFB300] relative"
+                style={{ scrollSnapAlign: 'start' }}
               >
-                {/* Subtle festive background pattern / radial glow */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.25),transparent_70%)] pointer-events-none" />
-
-                {/* Central illuminated cracker product image */}
-                <div className="relative mt-2 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-white/40 shadow-xl group-hover:scale-110 group-hover:shadow-2xl transition-all duration-300 bg-black/20">
+                {/* Full image completely filling until the name under it */}
+                <div className="relative w-full h-40 sm:h-48 overflow-hidden bg-stone-100">
                   <Image
                     src={getCategoryImageUrl(cat)}
                     alt={cat.name}
                     fill
-                    sizes="(max-width: 640px) 80px, 96px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 640px) 176px, 208px"
+                    className="object-cover group-hover:scale-108 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent pointer-events-none" />
                 </div>
 
-                {/* Category Title in Bold ALL-CAPS */}
-                <div className="relative z-10 w-full mb-1">
-                  <h3 className="text-white font-black text-xs sm:text-sm tracking-wider uppercase leading-tight line-clamp-2 drop-shadow-xs">
+                {/* Category Name under the image */}
+                <div className="p-3 sm:p-3.5 text-center bg-white flex flex-col items-center justify-between flex-1 border-t border-[#EAE5DC]/80">
+                  <h3 className="font-extrabold text-[#0F172A] text-xs sm:text-sm tracking-wide uppercase leading-tight line-clamp-2 group-hover:text-[#B91C35] transition-colors">
                     {displayName}
                   </h3>
-                  <span className="text-amber-200 text-[10px] sm:text-[11px] font-semibold mt-1 opacity-90 group-hover:opacity-100 block">
+                  <span className="text-[#0B6E99] group-hover:text-[#B91C35] text-[10px] sm:text-[11px] font-bold mt-1 transition-colors">
                     {locale === 'ta' ? 'காண்க →' : 'Explore →'}
                   </span>
                 </div>
